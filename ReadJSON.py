@@ -26,11 +26,11 @@ patterns = []
 for i in data['patterns']:
     patterns.append(i['pattern'])
 
-#print(patterns)
+print(patterns)
 
 matcher.add(data['label'], patterns)
 
-doc = nlp("Barack Obama was the 44th president of the United States")
+doc = nlp("Barack Obama was definitely the 44th president of the United States")
 
 matches = matcher(doc)
 for match_id, start, end in matches:

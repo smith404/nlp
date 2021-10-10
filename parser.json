@@ -4,14 +4,11 @@
         {
             "pattern":
             [
-                {
-                    "LOWER": "hello"
-                },
-                {
-                    "IS_PUNCT": true
-                },
-                {
-                    "LOWER": "world"
+                 {
+                    "TEXT":
+                    {
+                        "REGEX": "def?in[ia]tely"
+                    }
                 }
             ]
         },
