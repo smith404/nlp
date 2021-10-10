@@ -1,0 +1,30 @@
+{
+    "label": "PERSON",
+    "patterns": [
+        {
+            "pattern":
+            [
+                {
+                    "LOWER": "hello"
+                },
+                {
+                    "IS_PUNCT": true
+                },
+                {
+                    "LOWER": "world"
+                }
+            ]
+        },
+        {
+            "pattern":
+            [
+                {
+                    "LOWER": "barack"
+                },
+                {
+                    "LOWER": "obama"
+                }
+            ]
+        }
+    ]
+}
