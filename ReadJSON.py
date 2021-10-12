@@ -4,6 +4,8 @@ from spacy.matcher import Matcher
 from spacy.tokens import Span
 from spacy.matcher import PhraseMatcher
 
+from NamedEntity import NamedEntity
+
 import re
 
 import json
@@ -30,11 +32,11 @@ print(patterns)
 
 matcher.add(data['label'], patterns)
 
-doc = nlp("Barack Obama was definitely the 44th president of the United States")
+doc = nlp("barack Obama was definitely the 44th president of the United States")
 
 matches = matcher(doc)
 for match_id, start, end in matches:
-    # Create the matched span and assign the match_id as a label
     span = Span(doc, start, end, label=match_id)
-    print(span.text, span.label_)
+    e = NamedEntity(span.text, span.label_, span.start_char, span.end_char)  
+    print(e.toJSON())  	
 
