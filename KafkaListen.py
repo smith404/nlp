@@ -1,15 +1,8 @@
+import sys, getopt
+
 from confluent_kafka import Consumer
 from confluent_kafka import KafkaException
 from confluent_kafka import KafkaError
-
-conf = {'bootstrap.servers': 'localhost:9092',
-        'group.id': "foo",
-        'enable.auto.commit': False,
-        'auto.offset.reset': 'earliest'}
-
-consumer = Consumer(conf)
-
-running = True
 
 def msg_process(msg):
     print("Got message @" + str(msg.timestamp()))
@@ -42,5 +35,31 @@ def basic_consume_loop(consumer, topics):
 def shutdown():
     running = False
 
-basic_consume_loop(consumer, ["sample"])
+def main(argv):
+    groupId = 'foo'
 
+    try:
+        opts, args = getopt.getopt(argv,"hg:",["group_id="])
+    except getopt.GetoptError:
+        print('KafkaListen.py -g <group id>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('KafkaListen.py -g <group id>')
+            sys.exit()
+        elif opt in ("-g", "--group_id"):
+            groupId = arg
+
+    conf = {'bootstrap.servers': 'localhost:9092',
+            'group.id': groupId,
+            'enable.auto.commit': False,
+            'auto.offset.reset': 'earliest'}
+
+    consumer = Consumer(conf)
+
+    basic_consume_loop(consumer, ["sample"])
+
+running = True
+
+if __name__ == "__main__":
+   main(sys.argv[1:])
