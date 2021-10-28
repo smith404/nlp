@@ -1,6 +1,6 @@
 import spacy
-from NamedEntity import NamedEntity
-from PartOfSpeech import PartOfSpeech
+from named_entity import NamedEntity
+from part_of_speech import PartOfSpeech
 
 nlp = spacy.load("en_core_web_sm")
 
