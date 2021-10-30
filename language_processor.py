@@ -2,6 +2,7 @@ import spacy
 
 from part_of_speech import PartOfSpeech
 from named_entity import NamedEntity
+from span import Span
 
 nlp = spacy.load("en_core_web_trf")
 
@@ -52,4 +53,11 @@ class LanguageProcessor:
             if entity.label_ == kind:
                 results.append(NamedEntity(entity.text, entity.label_, \
                     entity.start_char, entity.end_char))
+        return results
+
+    def sentences(self):
+        results = []
+        for sentence in self._doc.sents:
+            results.append(Span(sentence.text, sentence.label_, \
+                sentence.start_char, sentence.end_char, sentence.sentiment))
         return results
