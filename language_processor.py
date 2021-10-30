@@ -26,7 +26,7 @@ class LanguageProcessor:
     def pos(self):
         results = []
         for token in self._doc:
-            results.append(PartOfSpeech(token.text, token.lemma_, \
+            results.append(PartOfSpeech(token.text, token.ent_type_, token.lemma_, \
                 token.pos_, token.tag_, token.dep_, \
                 token.shape_, token.is_alpha, token.is_stop))
         return results

@@ -1,8 +1,9 @@
 import json
 
 class PartOfSpeech:
-    def __init__(self, text, lemma, pos, tag, dep, shape, alpha, stop):
-        self.text = text
+    def __init__(self, text, ent_type, lemma, pos, tag, dep, shape, alpha, stop):
+        self.text = text.strip().replace("\n", "")
+        self.ent_type = ent_type
         self.lemma = lemma
         self.pos = pos
         self.tag = tag

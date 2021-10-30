@@ -17,7 +17,6 @@ class FileResponse:
             content = content + page.get_text('text')
             content = content + " "
 
-        print("C:" + content)    
         return content
 
     @staticmethod
