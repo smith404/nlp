@@ -1,17 +1,13 @@
 import spacy
+import json
 
 from spacy.matcher import Matcher
 from spacy.tokens import Span
-from spacy.matcher import PhraseMatcher
 
-from NamedEntity import NamedEntity
-
-import re
-
-import json
+from named_entity import NamedEntity
 
 # Opening JSON file
-f = open('parser.json',)
+f = open('matcher.json',)
 
 # returns JSON object as
 # a dictionary

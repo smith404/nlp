@@ -1,0 +1,4 @@
+{
+    "person": "matchers/person.json",
+    "proper_noun": "matchers/pnoun.json"
+}

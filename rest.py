@@ -85,5 +85,11 @@ def get_sentences(filename):
     return Response(to_json_array(lp.sentences()),  mimetype='application/json')
 
 
+@app.route('/api/v1.0/match/<string:filename>/<string:matcher>', methods=['GET'])
+def get_entities_with_matcher(filename, matcher):
+    lp = LanguageProcessor(FileResponse.text_from_pdf(os.path.join(app.config['UPLOAD_FOLDER'], filename)))
+    return Response(to_json_array(lp.matcher(matcher)),  mimetype='application/json')
+
+
 if __name__ == '__main__':
     app.run(debug=True)   

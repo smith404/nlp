@@ -1,0 +1,15 @@
+{
+    "label": "PRPRN",
+    "greedy": "LONGEST",
+    "patterns": [
+        {
+            "pattern":
+            [
+                {
+                    "POS": "PROPN",
+                    "OP": "+"
+                }
+            ]
+        }
+    ]
+}

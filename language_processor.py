@@ -1,15 +1,29 @@
 import spacy
+import json
 
 from part_of_speech import PartOfSpeech
 from named_entity import NamedEntity
 from span import Span
 
-nlp = spacy.load("en_core_web_trf")
+from spacy.matcher import Matcher
+
+nlp = spacy.load('en_core_web_md')
+
+# Add bespoke patters for entity recognition
+patterns = open('patterns.json')
+data = json.load(patterns)
+ruler = nlp.add_pipe('entity_ruler', before='ner')
+ruler.add_patterns(data)
+
+# Read matcher index
+index = open('matchers/index.json')
+known_matchers = json.load(index)
 
 class LanguageProcessor:
     def __init__(self, text):
         self._text = text
         self._doc = nlp(text)
+        
         
     @property            
     def text(self): 
@@ -58,6 +72,25 @@ class LanguageProcessor:
     def sentences(self):
         results = []
         for sentence in self._doc.sents:
-            results.append(Span(sentence.text, sentence.label_, \
+            results.append(Span(sentence.text, 'sentence', \
                 sentence.start_char, sentence.end_char, sentence.sentiment))
+        return results
+
+
+    def matcher(self, name):
+        matcher = Matcher(nlp.vocab)
+        json_file = known_matchers[name]
+        index = open(json_file)
+        match_object = json.load(index)
+        # Convert to a simple object list
+        patterns = []
+        for i in match_object['patterns']:
+            patterns.append(i['pattern'])
+        matcher.add(match_object['label'], patterns, greedy=match_object['greedy'])
+        matches = matcher(self._doc)
+        results = []
+        for match in matches:
+            match_span = self._doc[match[1]:match[2]]
+            results.append(Span(match_span.text, match_object['label'], \
+                match_span.start_char, match_span.end_char, match_span.sentiment))
         return results

@@ -1,0 +1,5 @@
+[
+    {"label": "ORG", "pattern": "redwood shores"},
+    {"label": "EMAIL", "pattern": [{"LIKE_EMAIL": true}]},
+    {"label": "WEB", "pattern": [{"LIKE_URL": true}]}
+]
