@@ -24,7 +24,6 @@ class LanguageProcessor:
         self._text = text
         self._doc = nlp(text)
         
-        
     @property            
     def text(self): 
         return self._text
@@ -75,7 +74,6 @@ class LanguageProcessor:
             results.append(Span(sentence.text, 'sentence', \
                 sentence.start_char, sentence.end_char, sentence.sentiment))
         return results
-
 
     def matcher(self, name):
         matcher = Matcher(nlp.vocab)

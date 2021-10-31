@@ -29,7 +29,7 @@
         const urlParams = new URLSearchParams(queryString);
 
         //$http.get('http://127.0.0.1:5000/api/v1.0/tokens/NNP').
-        $http.get('http://127.0.0.1:5000/api/v1.0/entities/GPE').
+        $http.get('http://127.0.0.1:5000/api/v1.0/entities/j4gwzbzl.pdf/LOC').
         then(function(response) {
             $scope.items = response.data;
         }).catch(function(err) {
@@ -38,6 +38,14 @@
             $scope.selectedPage.summary = "It looks like we couldn't find a page about: " + $scope.item;
             console.log(err);
         });
+
+        $scope.getFile = function()
+        {
+           let url = 'http://127.0.0.1:5000/api/v1.0/download/j4gwzbzl.pdf'
+           window.open(url, '_self')
+        };
+
+
     });
 </script>
 
@@ -49,6 +57,8 @@
             <h4 ng-bind-html="item.kind"></h4>
         </li>
     </ul>
+
+    <button ng-click="getFile()" ng-init="count=0">Download</button>    
 
 </div>
 </body>

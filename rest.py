@@ -5,7 +5,7 @@ import tempfile
 from language_processor import LanguageProcessor
 from file_response import FileResponse
 
-from flask import Flask, Response, flash, request, redirect, url_for
+from flask import Flask, Response, request, send_file
 from flask_cors import CORS
 
 UPLOAD_FOLDER = './temp'
@@ -44,6 +44,10 @@ def upload_file():
         response.sucess = True
     return Response(response.toJSON(),  mimetype='application/json')
 
+
+@app.route('/api/v1.0/download/<string:name>', methods=['GET'])
+def download_file(name):
+    return send_file(os.path.join(app.config['UPLOAD_FOLDER'], name), as_attachment=True)
 
 @app.route('/api/v1.0/clear/<string:name>', methods=['POST'])
 def delete_file(name):
