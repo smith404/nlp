@@ -46,17 +46,31 @@ def upload_file():
 
 
 @app.route('/api/v1.0/download/<string:name>', methods=['GET'])
-def download_file(name):
-    return send_file(os.path.join(app.config['UPLOAD_FOLDER'], name), as_attachment=True)
+def download_file(filename):
+    return send_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), as_attachment=True)
+
 
 @app.route('/api/v1.0/clear/<string:name>', methods=['POST'])
-def delete_file(name):
-    response = FileResponse(name)
-    if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], name)):
-        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], name))
+def delete_file(filename):
+    response = FileResponse(filename)
+    if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], filename)):
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     else:
         response.sucess = False
     return Response(response.toJSON(),  mimetype='application/json')
+
+
+@app.route('/api/v1.0/redact/<string:filename>', methods=['GET'])
+def redact(filename):
+    rtype = request.args.get('rtype')
+    entities = request.args.get('entities')
+    white_list = request.args.get('w')
+    white_list = request.args.get('b')
+    print("Type: ", rtype)
+    print("Entities: ", entities)
+    print("White List: ", white_list)
+    print("Black List: ", white_list)
+    return send_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), as_attachment=True)
 
 
 @app.route('/api/v1.0/tokens/<string:filename>', methods=['GET'])
@@ -74,6 +88,8 @@ def get_token_of_type(filename, tag):
 @app.route('/api/v1.0/entities/<string:filename>', methods=['GET'])
 def get_entities(filename):
     lp = LanguageProcessor(FileResponse.text_from_pdf(os.path.join(app.config['UPLOAD_FOLDER'], filename)))
+    lp.add_black_list('Securitisation;flexibly')
+    lp.add_white_list('movements;speculate')
     return Response(to_json_array(lp.entities()),  mimetype='application/json')
 
 

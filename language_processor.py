@@ -5,15 +5,16 @@ from part_of_speech import PartOfSpeech
 from named_entity import NamedEntity
 from span import Span
 
+from spacy.pipeline import EntityRuler
 from spacy.matcher import Matcher
 
 nlp = spacy.load('en_core_web_md')
 
 # Add bespoke patters for entity recognition
-patterns = open('patterns.json')
-data = json.load(patterns)
-ruler = nlp.add_pipe('entity_ruler', before='ner')
-ruler.add_patterns(data)
+data = open('patterns.json')
+bespoke_patterns = json.load(data)
+bespoke_ruler = nlp.add_pipe('entity_ruler', before='ner')
+bespoke_ruler.add_patterns(bespoke_patterns)
 
 # Read matcher index
 index = open('matchers/index.json')
@@ -23,7 +24,9 @@ class LanguageProcessor:
     def __init__(self, text):
         self._text = text
         self._doc = nlp(text)
-        
+
+    LIST_DELIMITER = ';'        
+
     @property            
     def text(self): 
         return self._text
@@ -35,6 +38,26 @@ class LanguageProcessor:
     @text.deleter
     def text(self):
         del self._text
+
+    def add_white_list(self, list):
+        token_list = list.split(self.LIST_DELIMITER)
+        if len(token_list) == 0:
+            return
+        white_patterns = []
+        for token in token_list:
+            white_patterns.append({'label': 'WHITE', 'pattern': token})
+        bespoke_ruler.patterns.append(white_patterns)
+        print(bespoke_ruler.patterns)
+
+    def add_black_list(self, list):
+        token_list = list.split(self.LIST_DELIMITER)
+        if len(token_list) == 0:
+            return
+        black_patterns = []
+        for token in token_list:
+            black_patterns.append({'label': 'BLACK', 'pattern': token})
+        bespoke_ruler.patterns.append(black_patterns)
+        print(bespoke_ruler.patterns)
 
     def pos(self):
         results = []
