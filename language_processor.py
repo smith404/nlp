@@ -8,6 +8,8 @@ from span import Span
 from spacy.pipeline import EntityRuler
 from spacy.matcher import Matcher
 
+from sentiment import SpacyTextBlob, Seniment
+
 nlp = spacy.load('en_core_web_md')
 
 # Add bespoke patters for entity recognition
@@ -20,8 +22,11 @@ bespoke_ruler.add_patterns(bespoke_patterns)
 index = open('matchers/index.json')
 known_matchers = json.load(index)
 
+# Add sentiment pipeline
+nlp.add_pipe('spacytextblob')
+
 class LanguageProcessor:
-    def __init__(self, text):
+    def __init__(self, text, ):
         self._text = text
         self._doc = nlp(text)
 
@@ -97,6 +102,9 @@ class LanguageProcessor:
             results.append(Span(sentence.text, 'sentence', \
                 sentence.start_char, sentence.end_char, sentence.sentiment))
         return results
+
+    def sentiment(self):
+        return Seniment(self._doc.text, self._doc._.polarity, self._doc._.subjectivity, self._doc._.assessments)
 
     def matcher(self, name):
         matcher = Matcher(nlp.vocab)
