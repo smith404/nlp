@@ -2,7 +2,7 @@ import json
 
 class Span:
     def __init__(self, text, label, start, end, sentiment):
-        self.text = text.strip().replace("\n", "")
+        self.text = text.strip().replace("\n", " ")
         self.label = label
         self.start = start
         self.end = end

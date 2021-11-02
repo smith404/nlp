@@ -10,14 +10,22 @@ class FileResponse:
         self._sucess = True
 
     @staticmethod
-    def text_from_pdf(filename):
+    def remove_punctuation(text):
+        final = "".join(u for u in text if u not in ("?", ".", ";", ":",  "!",'"'))
+        return final
+
+    @staticmethod
+    def text_from_pdf(filename, remove_puntuation = False):
         content = ''
         doc = fitz.open(filename)
         for page in doc:
             content = content + page.get_text('text')
             content = content + " "
 
-        return content
+        if remove_puntuation:
+            return FileResponse.remove_punctuation(content)
+        else:            
+            return content
 
     @staticmethod
     def text_from_docx(filename):
