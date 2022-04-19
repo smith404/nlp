@@ -1,12 +1,15 @@
 #!flask/bin/python
 import os
 import tempfile
+import spacy
 
 from language_processor import LanguageProcessor
 from file_response import FileResponse
 
-from flask import Flask, Response, request, send_file
+from flask import Flask, Response, request, send_file, render_template
 from flask_cors import CORS
+
+from text_response import TextResponse
 
 UPLOAD_FOLDER = './temp'
 
@@ -27,7 +30,6 @@ def to_json_array(list):
     results = results + ']'
     return results
 
-
 @app.route('/api/v1.0/upload', methods=['POST'])
 def upload_file():
     response = FileResponse("")
@@ -44,6 +46,32 @@ def upload_file():
         response.sucess = True
     return Response(response.toJSON(),  mimetype='application/json')
 
+
+@app.route('/api/v1.0/data/sanitize', methods=['POST'])
+def get_sanitized():
+    body_text = request.get_data(as_text=True)
+    tr  = TextResponse(body_text)
+    tr._original_text = tr.remove_stop_words()
+    return Response(tr.toJSON(),  mimetype='application/json')
+
+
+@app.route('/api/v1.0/data/sanitize-text', methods=['POST'])
+def get_sanitized_text():
+    body_text = request.get_data(as_text=True)
+    lp  = LanguageProcessor(body_text)
+    tr  = TextResponse(lp.tokens_to_string(lp.remove_stops()))
+    return Response(tr.toJSON(),  mimetype='application/json')
+
+
+@app.route('/api/v1.0/data/tokens', methods=['POST'])
+def get_tokens_from_text():
+    stop_words = request.args.get("stop-words")
+    body_text = request.get_data(as_text=True)
+    lp  = LanguageProcessor(body_text)
+    if (stop_words == "false"):
+        return Response(to_json_array(lp.remove_stops()),  mimetype='application/json')
+    else:
+        return Response(to_json_array(lp.pos()),  mimetype='application/json')
 
 @app.route('/api/v1.0/download/<string:name>', methods=['GET'])
 def download_file(filename):

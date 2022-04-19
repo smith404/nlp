@@ -10,7 +10,7 @@ from spacy.matcher import Matcher
 
 from sentiment import SpacyTextBlob, Seniment
 
-nlp = spacy.load('en_core_web_md')
+nlp = spacy.load('en_core_web_trf')
 
 # Add bespoke patters for entity recognition
 data = open('patterns.json')
@@ -31,6 +31,14 @@ class LanguageProcessor:
         self._doc = nlp(text)
 
     LIST_DELIMITER = ';'        
+
+    @staticmethod
+    def tokens_to_string(tokens):
+        result = ""
+        for token in tokens:
+            result = result + token.lemma + " "
+        
+        return result
 
     @property            
     def text(self): 
@@ -106,6 +114,15 @@ class LanguageProcessor:
     def sentiment(self):
         return Seniment(self._doc.text, self._doc._.polarity, self._doc._.subjectivity, self._doc._.assessments)
 
+    def remove_stops(self):
+        results = []
+        for token in self._doc:
+            if (token.is_stop == False):
+                results.append(PartOfSpeech(token.text, token.ent_type_, token.lemma_, \
+                    token.pos_, token.tag_, token.dep_, \
+                    token.shape_, token.is_alpha, token.is_stop))
+        return results
+        
     def matcher(self, name):
         matcher = Matcher(nlp.vocab)
         json_file = known_matchers[name]
