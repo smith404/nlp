@@ -60,6 +60,7 @@ def get_sanitized_text():
     body_text = request.get_data(as_text=True)
     lp  = LanguageProcessor(body_text)
     tr  = TextResponse(lp.tokens_to_string(lp.remove_stops()))
+    tr.remove_punctuation()    
     return Response(tr.toJSON(),  mimetype='application/json')
 
 

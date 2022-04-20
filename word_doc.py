@@ -4,6 +4,7 @@ from re import compile
 
 document = Document('orig_test.docx')
 
+
 keyword = compile(r'\s*Creator: (?P<creator_name>\w+)\s*')
 
 word_replacement = 'Daniel Serrano'
