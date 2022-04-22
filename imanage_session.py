@@ -41,12 +41,12 @@ class IManageSession:
         return self._state
 
     @state.setter
-    def token(self, value):
+    def state(self, value):
         self._state = value
 
     @property            
     def token(self): 
-        return self._state
+        return self._token
 
     @token.setter
     def token(self, value):
@@ -89,8 +89,8 @@ class IManageSession:
             self.state = 500
         return json.dumps(text)
 
-    def get_workspaces(self):
-        response = self.get_imamage_data('workspaces/search')
+    def get_workspaces(self, offset = 0):
+        response = self.get_imamage_data('workspaces/search?offset=' + offset)
         workspaces = []
         workspaceData = response['data']
         for workspaceObject in workspaceData:
