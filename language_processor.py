@@ -26,7 +26,7 @@ known_matchers = json.load(index)
 nlp.add_pipe('spacytextblob')
 
 class LanguageProcessor:
-    def __init__(self, text, ):
+    def __init__(self, text):
         self._text = text
         self._doc = nlp(text)
 
