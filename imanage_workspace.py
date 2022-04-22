@@ -5,7 +5,7 @@ import re
 
 from imanage_object import IManageObject
 
-class IManageFolder(IManageObject):
+class IManageWorkspace(IManageObject):
     def __init__(self, body):
         super().__init__(body)
 

@@ -1,5 +1,6 @@
 from imanage_folder import IManageFolder
+from imanage_session import IManageSession
 
-folder = IManageFolder('EMEA!12345')
+folder = IManageSession.create_object({ "id": "EMEA!12345", "wstype": "folder" })
 
 folder.info()

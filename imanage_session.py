@@ -1,8 +1,14 @@
 import json
-import html
 import traceback
 import requests
-import re
+
+from object_type import ObjectType
+from imanage_object import IManageObject
+from imanage_workspace import IManageWorkspace
+from imanage_folder import IManageFolder
+from imanage_document import IManageDocument
+from imanage_email import IManageEmail
+
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
@@ -14,6 +20,21 @@ class IManageSession:
         self._baseURL = baseURL
         self._token = token
         self._state = 200
+
+    @staticmethod
+    def create_object(body):
+        type = ObjectType.UNKNOWN
+        if 'wstype' in body:
+            type = ObjectType.value(body['wstype'])
+        if type == ObjectType.DOCUMENT:
+            return IManageDocument(body)
+        if type == ObjectType.FOLDER:
+            return IManageFolder(body)
+        if type == ObjectType.EMAIL:
+            return IManageEmail(body)
+        if type == ObjectType.WORKSPACE:
+            return IManageWorkspace(body)
+        return None
 
     @property            
     def state(self): 
@@ -66,4 +87,18 @@ class IManageSession:
         except:
             traceback.print_exc()
             self.state = 500
-        return json.dumps(text)        
+        return json.dumps(text)
+
+    def get_workspaces(self):
+        response = self.get_imamage_data('workspaces/search')
+        workspaces = []
+        workspaceData = response['data']
+        for workspaceObject in workspaceData:
+            # Create an object with the workspace data
+            workspace = IManageSession.create_object(workspaceObject)
+            # Add the session that read the workspace to the child object 
+            workspace.session = self
+            workspaces.append(workspace)
+        return workspaces
+       
+
