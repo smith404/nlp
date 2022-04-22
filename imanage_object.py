@@ -16,6 +16,10 @@ class IManageObject:
             self.wstype = ObjectType.value(body['wstype'])
         else:
             self.wstype = ObjectType.UNKNOWN
+        if 'name' in body:
+            self.id = body['name']
+        else:
+            self.id = '<empty>'
         self.session = None
 
     @property            
@@ -25,6 +29,14 @@ class IManageObject:
     @id.setter
     def id(self, value):
         self._id = value
+
+    @property            
+    def name(self): 
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     @property            
     def wstype(self): 
@@ -41,6 +53,14 @@ class IManageObject:
     @session.setter
     def session(self, value):
         self._session = value
+
+    @property            
+    def body(self): 
+        return self._body
+
+    @id.body
+    def body(self, value):
+        self._body = value
 
     def info(self):
         print('Object id: ' + self.id)

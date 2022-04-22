@@ -68,8 +68,51 @@ class IManageSession:
         try:
             response = requests.get(url, headers=self.make_header(), verify=False)
             self.state = response.status_code
-            if response.status_code == 200:
-                return response.json()
+            return response.json()
+        except:
+            traceback.print_exc()
+            self.state = 500
+        return {}
+
+    def patch_imanage_data(self, url_path, body):
+        url = self.baseURL + url_path
+        try:
+            response = requests.patch(url, headers=self.make_header(), data = json.dumps(body), verify=False)
+            self.state = response.status_code
+            return response.json()
+        except:
+            traceback.print_exc()
+            self.state = 500
+        return {}
+
+    def post_imanage_data(self, url_path, body):
+        url = self.baseURL + url_path
+        try:
+            response = requests.post(url, headers=self.make_header(), data = json.dumps(body), verify=False)
+            self.state = response.status_code
+            return response.json()
+        except:
+            traceback.print_exc()
+            self.state = 500
+        return {}
+
+    def put_imanage_data(self, url_path, body):
+        url = self.baseURL + url_path
+        try:
+            response = requests.put(url, headers=self.make_header(), data = json.dumps(body), verify=False)
+            self.state = response.status_code
+            return response.json()
+        except:
+            traceback.print_exc()
+            self.state = 500
+        return {}
+
+    def delete_imanage_data(self, url_path, body):
+        url = self.baseURL + url_path
+        try:
+            response = requests.delete(url, headers=self.make_header(), data = json.dumps(body), verify=False)
+            self.state = response.status_code
+            return response.json()
         except:
             traceback.print_exc()
             self.state = 500
@@ -84,6 +127,8 @@ class IManageSession:
             self.state = response.status_code
             if response.status_code == 200:
                 text['body'] = response.text
+            else:
+                text['body'] = response.json()
         except:
             traceback.print_exc()
             self.state = 500

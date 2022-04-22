@@ -10,25 +10,24 @@ class IManageWorkspace(IManageObject):
         super().__init__(body)
 
     def get_children(self, offset = 0):
-        response = self.get_imanage_data('workspaces/' + self.id + '/children?offset=' + str(offset))
+        response = self.session.get_imanage_data('workspaces/' + self.id + '/children?offset=' + str(offset))
         items = []
         if 'data' not in response:
             return items
         itemData = response['data']
         for itemObject in itemData:
-            # Create an object with the workspace data
             item = self.session.create_object(itemObject)
-            # Add the session that read the workspace to the child object 
             item.session = self.session
             items.append(item)
         return items
 
     def get_folder(self, name):
-        response = self.get_imanage_data('workspaces/' + self.id + '/folders/search?name=' + name)
-        item = {}
+        response = self.session.get_imanage_data('workspaces/' + self.id + '/folders/search?name=' + name)
+        item = None
         if 'data' not in response:
             return item
         itemData = response['data']
         if len(itemData) > 0:
-            return itemData[0]
+            item = self.session.create_object(itemData[0])
+            item.session = self.session
         return item
