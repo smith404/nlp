@@ -63,7 +63,7 @@ class IManageSession:
     def make_header(self):
         return { 'Authorization' : 'Bearer ' + self.token }
 
-    def get_imamage_data(self, url_path):
+    def get_imanage_data(self, url_path):
         url = self.baseURL + url_path
         try:
             response = requests.get(url, headers=self.make_header(), verify=False)
@@ -75,7 +75,7 @@ class IManageSession:
             self.state = 500
         return {}
 
-    def get_imamage_document(self, doc_id):
+    def get_imanage_document(self, doc_id):
         text = {}
         text['body'] = ''
         url = self.baseURL + 'documents/' + doc_id + '/download'
@@ -90,8 +90,10 @@ class IManageSession:
         return json.dumps(text)
 
     def get_workspaces(self, offset = 0):
-        response = self.get_imamage_data('workspaces/search?offset=' + offset)
+        response = self.get_imanage_data('workspaces/search?offset=' + str(offset))
         workspaces = []
+        if 'data' not in response:
+            return workspaces
         workspaceData = response['data']
         for workspaceObject in workspaceData:
             # Create an object with the workspace data
