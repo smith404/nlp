@@ -12,14 +12,18 @@ class IManageObject:
             self.id = body['id']
         else:
             self.id = 'None'
+        if 'database' in body:
+            self.database = body['database']
+        else:
+            self.database = 'None'
         if 'wstype' in body:
             self.wstype = ObjectType.value(body['wstype'])
         else:
             self.wstype = ObjectType.UNKNOWN
         if 'name' in body:
-            self.id = body['name']
+            self.name = body['name']
         else:
-            self.id = '<empty>'
+            self.name = '<empty>'
         self.session = None
 
     @property            
@@ -29,6 +33,14 @@ class IManageObject:
     @id.setter
     def id(self, value):
         self._id = value
+
+    @property            
+    def database(self): 
+        return self._database
+
+    @database.setter
+    def database(self, value):
+        self._database = value
 
     @property            
     def name(self): 
@@ -58,14 +70,14 @@ class IManageObject:
     def body(self): 
         return self._body
 
-    @id.body
+    @body.setter
     def body(self, value):
         self._body = value
 
     def info(self):
-        print('Object id: ' + self.id)
-        print('Object type: ' + str(self.wstype))
-        print('Session: ' + str(self.session))
+        print(self.database + '!' + str(self.wstype) + ': ' + self.name + ' (' + self.id + ')')
+        if self.session is None:
+            print('No session found')
 
 
 

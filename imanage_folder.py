@@ -44,3 +44,20 @@ class IManageFolder(IManageObject):
             item.session = self.session
         return item
 
+    def make_folder(self, name):
+        body = {}
+        body['database'] = self.database
+        body['name'] = self.name
+        response = self.session.post_imanage_data('folders/' + self.id + '/children', body)
+        item = None
+        if 'data' not in response:
+            return item
+        itemData = response['data']
+        if len(itemData) > 0:
+            item = self.session.create_object(itemData[0])
+            item.session = self.session
+        return item
+
+    def move_content(self, to_folder):
+
+        return True
