@@ -49,24 +49,21 @@ class IManageFolder(IManageObject):
 
     def subfolder_exists(self, name):
         response = self.session.get_imanage_data('folders/' + self.id + '/subfolders?limit=1000')
-        item = None
         if 'data' not in response:
             return False
-        itemData = response['data']
+        itemData = [item for item in response['data'] if item.name == name]
         if len(itemData) > 0:
-            for folder in itemData:
-                if folder['name'] == name:
-                    return True
-                else:
-                    return False
-        return False
+            return True
+        else:
+            return False
 
     def make_folder(self, name):
         body = {}
-        body['database'] = self.database
         body['name'] = self.name
-        response = self.session.post_imanage_data('folders/' + self.id + '/children', body)
-        item = None
+        body['default_security'] = 'inherit'
+        body['database'] = self.database
+        body['description'] = 'K2-Lib created folder for ' + self.name
+        response = self.session.post_imanage_data('folders/' + self.id + '/subfolders', body)
         if 'data' in response:
             return True
         else:

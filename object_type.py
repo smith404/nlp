@@ -33,5 +33,3 @@ class ObjectType(Enum):
         if wstype.casefold() == 'library':
             return ObjectType.LIBRARY
         return ObjectType.UNKNOWN
-
-
