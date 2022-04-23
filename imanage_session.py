@@ -1,3 +1,6 @@
+# Copyright (c) 2022. K2-Software
+# All software, both binary and source published by K2-Software (hereafter, Software) is copyrighted by the author (hereafter, K2-Software) and ownership of all right, title and interest in and to the Software remains with K2-Software. By using or copying the Software, User agrees to abide by the terms of this Agreement.
+
 import json
 import traceback
 import requests
@@ -9,16 +12,14 @@ from imanage_folder import IManageFolder
 from imanage_document import IManageDocument
 from imanage_email import IManageEmail
 
-
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 # We are ignoring certificate warnings so we don't want wanrnings all the time
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class IManageSession:
-    def __init__(self, baseURL, customer, token):
+    def __init__(self, baseURL, token):
         self._baseURL = baseURL
-        self._customer = customer
         self._token = token
         self._state = 200
 
@@ -52,14 +53,6 @@ class IManageSession:
     @baseURL.setter
     def baseURL(self, value):
         self._baseURL = value
-
-    @property            
-    def customer(self): 
-        return self._customer
-
-    @customer.setter
-    def customer(self, value):
-        self._customer = value
 
     @property            
     def token(self): 
