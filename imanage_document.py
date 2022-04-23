@@ -3,6 +3,7 @@
 
 import json
 import html
+import os
 import requests
 import re
 
@@ -11,6 +12,7 @@ from imanage_object import IManageObject
 class IManageDocument(IManageObject):
     def __init__(self, body):
         super().__init__(body)
+        self._data = None
 
     def get_filename(self):
         if 'name' in self.body and 'extension' in self.body:
@@ -20,3 +22,6 @@ class IManageDocument(IManageObject):
         else:
             return 'unknown-file-name'
         
+    def persist(self, path):
+        with open(os.path.join(path, self.get_filename()), "wb") as target_file:
+            target_file.write(self._data)

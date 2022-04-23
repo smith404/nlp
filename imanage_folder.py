@@ -86,3 +86,11 @@ class IManageFolder(IManageObject):
             return True
         else:
             return False
+
+    def copy_document(self, document):
+        body = {}
+        response = self.session.post_imanage_data('folders/' + self.id + '/documents/' + document.id, body)
+        if 'data' in response:
+            return True
+        else:
+            return False

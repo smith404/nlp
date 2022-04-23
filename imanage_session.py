@@ -126,21 +126,22 @@ class IManageSession:
             self.state = 500
         return {}
 
-    def get_imanage_document(self, doc_id):
-        text = {}
-        text['body'] = ''
-        url = self.baseURL + 'documents/' + doc_id + '/download'
+    def get_imanage_document(self, document):
+        url = self.baseURL + 'documents/' + document.id + '/download'
         try:
             response = requests.get(url, headers=self.make_authenticated_header(), verify=False)
             self.state = response.status_code
             if response.status_code == 200:
-                text['body'] = response.text
+                document._data = response.content
+                return True
             else:
-                text['body'] = response.json()
+                document._data = None
+                return False
         except:
             traceback.print_exc()
             self.state = 500
-        return json.dumps(text)
+            document._data = None
+        return False
 
     def get_libraries(self):
         response = self.get_imanage_data('libraries')
