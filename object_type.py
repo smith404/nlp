@@ -9,6 +9,7 @@ class ObjectType(Enum):
     DOCUMENT_SHORTCUT = 5
     FOLDER_SHORTCUT = 6
     WORKSPACE_SHORTCUT = 7
+    LIBRARY = 8
 
     @staticmethod
     def value(wstype):
@@ -26,6 +27,8 @@ class ObjectType(Enum):
             return ObjectType.FOLDER_SHORTCUT
         if wstype.casefold() == 'workspace_shortcut':
             return ObjectType.WORKSPACE_SHORTCUT
+        if wstype.casefold() == 'library':
+            return ObjectType.LIBRARY
         return ObjectType.UNKNOWN
 
 

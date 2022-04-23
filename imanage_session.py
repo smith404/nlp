@@ -16,8 +16,9 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class IManageSession:
-    def __init__(self, baseURL, token):
+    def __init__(self, baseURL, customer, token):
         self._baseURL = baseURL
+        self._customer = customer
         self._token = token
         self._state = 200
 
@@ -45,14 +46,6 @@ class IManageSession:
         self._state = value
 
     @property            
-    def token(self): 
-        return self._token
-
-    @token.setter
-    def token(self, value):
-        self._token = value
-
-    @property            
     def baseURL(self): 
         return self._baseURL
 
@@ -60,13 +53,35 @@ class IManageSession:
     def baseURL(self, value):
         self._baseURL = value
 
-    def make_header(self):
+    @property            
+    def customer(self): 
+        return self._customer
+
+    @customer.setter
+    def customer(self, value):
+        self._customer = value
+
+    @property            
+    def token(self): 
+        return self._token
+
+    @token.setter
+    def token(self, value):
+        self._token = value
+
+    def make_authenticated_header(self):
         return { 'Authorization' : 'Bearer ' + self.token }
+
+    def make_header_with_content_type(self, type):
+        header = {}
+        header['Authorization'] = 'Bearer ' + self.token
+        header['Content-Type'] = type
+        return header
 
     def get_imanage_data(self, url_path):
         url = self.baseURL + url_path
         try:
-            response = requests.get(url, headers=self.make_header(), verify=False)
+            response = requests.get(url, headers=self.make_authenticated_header(), verify=False)
             self.state = response.status_code
             return response.json()
         except:
@@ -77,7 +92,7 @@ class IManageSession:
     def patch_imanage_data(self, url_path, body):
         url = self.baseURL + url_path
         try:
-            response = requests.patch(url, headers=self.make_header(), data = json.dumps(body), verify=False)
+            response = requests.patch(url, headers=self.make_header_with_content_type('application/json'), data = json.dumps(body), verify=False)
             self.state = response.status_code
             return response.json()
         except:
@@ -88,7 +103,7 @@ class IManageSession:
     def post_imanage_data(self, url_path, body):
         url = self.baseURL + url_path
         try:
-            response = requests.post(url, headers=self.make_header(), data = json.dumps(body), verify=False)
+            response = requests.post(url, headers=self.make_header_with_content_type('application/json'), data = json.dumps(body), verify=False)
             self.state = response.status_code
             return response.json()
         except:
@@ -99,7 +114,7 @@ class IManageSession:
     def put_imanage_data(self, url_path, body):
         url = self.baseURL + url_path
         try:
-            response = requests.put(url, headers=self.make_header(), data = json.dumps(body), verify=False)
+            response = requests.put(url, headers=self.make_header_with_content_type('application/json'), data = json.dumps(body), verify=False)
             self.state = response.status_code
             return response.json()
         except:
@@ -110,7 +125,7 @@ class IManageSession:
     def delete_imanage_data(self, url_path, body):
         url = self.baseURL + url_path
         try:
-            response = requests.delete(url, headers=self.make_header(), data = json.dumps(body), verify=False)
+            response = requests.delete(url, headers=self.make_header_with_content_type('application/json'), data = json.dumps(body), verify=False)
             self.state = response.status_code
             return response.json()
         except:
@@ -123,7 +138,7 @@ class IManageSession:
         text['body'] = ''
         url = self.baseURL + 'documents/' + doc_id + '/download'
         try:
-            response = requests.get(url, headers=self.make_header(), verify=False)
+            response = requests.get(url, headers=self.make_authenticated_header(), verify=False)
             self.state = response.status_code
             if response.status_code == 200:
                 text['body'] = response.text
@@ -133,6 +148,20 @@ class IManageSession:
             traceback.print_exc()
             self.state = 500
         return json.dumps(text)
+
+    def get_libraries(self):
+        response = self.get_imanage_data('libraries')
+        libraries = []
+        if 'data' not in response:
+            return libraries
+        librariesData = response['data']
+        for libraryObject in librariesData:
+            # Create an object with the workspace data
+            library = IManageSession.create_object(libraryObject)
+            # Add the session that read the workspace to the child object 
+            library.session = self
+            libraries.append(library)
+        return libraries
 
     def get_workspaces(self, offset = 0):
         response = self.get_imanage_data('workspaces/search?offset=' + str(offset))

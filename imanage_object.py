@@ -24,6 +24,10 @@ class IManageObject:
             self.name = body['name']
         else:
             self.name = '<empty>'
+        if 'type' in body:
+            if body['name'] == 'worksite':
+                self.wstype = ObjectType.LIBRARY
+
         self.session = None
 
     @property            
