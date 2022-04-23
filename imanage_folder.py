@@ -24,8 +24,8 @@ class IManageFolder(IManageObject):
             documents.append(document)
         return documents
 
-    def get_children(self, offset = 0):
-        response = self.session.get_imanage_data('folders/' + self.id + '/children?offset=' + str(offset))
+    def get_children(self, type = 'all', offset = 0):
+        response = self.session.get_imanage_data('folders/' + self.id + '/children?children_type=' + type + '&offset=' + str(offset))
         items = []
         if 'data' not in response:
             return items
@@ -41,7 +41,7 @@ class IManageFolder(IManageObject):
         item = None
         if 'data' not in response:
             return item
-        itemData = response['data']
+        itemData = [item for item in response['data'] if item['name'] == name]
         if len(itemData) > 0:
             item = self.session.create_object(itemData[0])
             item.session = self.session
@@ -51,7 +51,7 @@ class IManageFolder(IManageObject):
         response = self.session.get_imanage_data('folders/' + self.id + '/subfolders?limit=1000')
         if 'data' not in response:
             return False
-        itemData = [item for item in response['data'] if item.name == name]
+        itemData = [item for item in response['data'] if item['name'] == name]
         if len(itemData) > 0:
             return True
         else:
@@ -59,10 +59,10 @@ class IManageFolder(IManageObject):
 
     def make_folder(self, name):
         body = {}
-        body['name'] = self.name
+        body['name'] = name
         body['default_security'] = 'inherit'
         body['database'] = self.database
-        body['description'] = 'K2-Lib created folder for ' + self.name
+        body['description'] = 'K2-Lib created folder for ' + name
         response = self.session.post_imanage_data('folders/' + self.id + '/subfolders', body)
         if 'data' in response:
             return True
@@ -70,5 +70,19 @@ class IManageFolder(IManageObject):
             return False
 
     def move_content(self, to_folder):
-
+        count = 0
+        children = []
+        while True:
+            children = self.get_children(offset = count)
+            if len(children) == 0:
+                break
         return True
+
+    def move_document(self, document, to_folder):
+        body = {}
+        body['destination_folder_id'] = to_folder.id
+        response = self.session.post_imanage_data('folders/' + self.id + '/documents/' + document.id + '/move' , body)
+        if 'data' in response:
+            return True
+        else:
+            return False

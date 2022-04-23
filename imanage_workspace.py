@@ -12,7 +12,7 @@ class IManageWorkspace(IManageObject):
     def __init__(self, body):
         super().__init__(body)
 
-    def get_children(self, offset = 0):
+    def get_folders(self, offset = 0):
         response = self.session.get_imanage_data('workspaces/' + self.id + '/children?offset=' + str(offset))
         items = []
         if 'data' not in response:
@@ -29,7 +29,7 @@ class IManageWorkspace(IManageObject):
         item = None
         if 'data' not in response:
             return item
-        itemData = response['data']
+        itemData = [item for item in response['data'] if item['name'] == name]
         if len(itemData) > 0:
             item = self.session.create_object(itemData[0])
             item.session = self.session
