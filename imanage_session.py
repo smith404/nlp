@@ -143,19 +143,16 @@ class IManageSession:
             document._data = None
         return False
 
-    def get_libraries(self):
-        response = self.get_imanage_data('libraries')
-        libraries = []
-        if 'data' not in response:
-            return libraries
-        librariesData = response['data']
-        for libraryObject in librariesData:
-            # Create an object with the workspace data
-            library = IManageSession.create_object(libraryObject)
-            # Add the session that read the workspace to the child object 
-            library.session = self
-            libraries.append(library)
-        return libraries
+    def upload_imanage_data(self, url_path, data):
+        url = self.baseURL + url_path
+        try:
+            response = requests.delete(url, headers=self.make_header_with_content_type('application/json'), data = json.dumps(data), verify=False)
+            self.state = response.status_code
+            return response.json()
+        except:
+            traceback.print_exc()
+            self.state = 500
+        return {}
 
     def get_workspaces(self, offset = 0):
         response = self.get_imanage_data('workspaces/search?offset=' + str(offset))

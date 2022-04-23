@@ -6,6 +6,7 @@ import html
 import os
 import requests
 import re
+import tempfile
 
 from imanage_object import IManageObject
 
@@ -20,8 +21,13 @@ class IManageDocument(IManageObject):
         elif 'name' in self.body:
             return self.body['name']
         else:
-            return 'unknown-file-name'
+            return next(tempfile._get_candidate_names())
         
     def persist(self, path):
+        if self._data is None:
+            self.session.get_imanage_document(self)
+        if self._data is None:
+            return False
         with open(os.path.join(path, self.get_filename()), "wb") as target_file:
             target_file.write(self._data)
+        return True
