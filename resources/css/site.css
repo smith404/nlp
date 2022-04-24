@@ -1,0 +1,245 @@
+ @font-face {
+     font-family: "FrutigerLight";
+     src: url("/fonts/frutiger/frutiger-light-webfont.woff") format('woff');
+}
+ @font-face {
+     font-family: "Frutiger";
+     src: url("/fonts/frutiger/frutiger-roman-webfont.woff") format('woff');
+}
+.iris-main {
+     margin-top: 20px;
+     margin-bottom: 20px;
+}
+ .navbar-brand {
+     padding-top: 5px;
+}
+ .iris-nav-button {
+     background-color: RoyalBlue;
+     color: WhiteSmoke;
+     margin: 2px;
+}
+ .iris-nav-button:hover {
+     color: MistyRose;
+}
+ .iris-toolbar-button {
+     background-color: RoyalBlue;
+     color: WhiteSmoke;
+     margin: 3px;
+}
+ .iris-toolbar-button:hover {
+     color: MistyRose;
+}
+ .tooltip {
+     color: MidnightBlue;
+}
+ .modal-backdrop {
+     visibility: hidden !important;
+}
+ .modal.in {
+     background-color: rgba(0,0,0,0.5);
+}
+ .form-control-cb {
+     height: calc(1.5em + .75rem + 2px);
+     width: calc(1.5em + .75rem + 2px);
+}
+ .iris-code {
+     font-family: monospace;
+     overflow: scroll;
+}
+ .activity-list {
+     max-height: 400px;
+     overflow: hidden;
+     overflow-y: scroll;
+}
+ .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+     color: white !important;
+     border: 1px solid PowderBlue!important;
+     background-color: PowderBlue!important;
+     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, PowderBlue), color-stop(100%, PowderBlue))!important;
+     background: -webkit-linear-gradient(top, PowderBlue 0%, PowderBlue 100%)!important;
+     background: -moz-linear-gradient(top, PowderBlue 0%, PowderBlue 100%)!important;
+     background: -ms-linear-gradient(top, PowderBlue 0%, PowderBlue 100%)!important;
+     background: -o-linear-gradient(top, PowderBlue 0%, PowderBlue 100%)!important;
+     background: linear-gradient(to bottom, PowderBlue 0%, PowderBlue 100%)!important;
+}
+ .iris-chart-row {
+     margin-top: 15px;
+     margin-bottom: 15px;
+}
+ .iris-report-row {
+     margin-top: 15px;
+     margin-bottom: 15px;
+}
+ .center-chart {
+     padding-left: 0;
+     padding-right: 0;
+     margin-left: auto;
+     margin-right: auto;
+     margin-top: 16px;
+     max-height: 500px;
+}
+ .btn-deletable {
+     background-color: CornflowerBlue;
+     border: none;
+     color: white;
+     text-align: center;
+     text-decoration: none;
+     display: inline-block;
+     font-size: 16px;
+     margin: 4px 2px;
+     border-radius: 12px;
+}
+ .btn-deletable:hover {
+     background-color: LightPink;
+     animation: shake 0.5s;
+     animation-iteration-count: infinite;
+}
+ .btn-footer, .btn-header {
+     margin-top: 10px;
+     margin-bottom: 10px;
+}
+ .btn-iris {
+     margin-left: 5px;
+     margin-right: 5px;
+}
+ .form-check-label {
+     padding-right: 10px;
+     padding-bottom: 10px;
+}
+ .row-buffer {
+     margin-top:10px;
+     margin-bottom:10px;
+}
+ .dotted-border {
+    border-style: dotted;
+}
+ .dashed-border {
+    border-style: dashed;
+}
+ .solid-border {
+    border-style: solid;
+}
+ .double-border {
+    border-style: double;
+}
+ .groove-border {
+    border-style: groove;
+}
+ .ridge-border {
+    border-style: ridge;
+}
+ .inset-border {
+    border-style: inset;
+}
+ .outset-border {
+    border-style: outset;
+}
+ @keyframes shake {
+     0% {
+         transform: translate(1px, 1px) rotate(0deg);
+    }
+     10% {
+         transform: translate(-1px, -2px) rotate(-1deg);
+    }
+     20% {
+         transform: translate(-3px, 0px) rotate(1deg);
+    }
+     30% {
+         transform: translate(3px, 2px) rotate(0deg);
+    }
+     40% {
+         transform: translate(1px, -1px) rotate(1deg);
+    }
+     50% {
+         transform: translate(-1px, 2px) rotate(-1deg);
+    }
+     60% {
+         transform: translate(-3px, 1px) rotate(0deg);
+    }
+     70% {
+         transform: translate(3px, 1px) rotate(-1deg);
+    }
+     80% {
+         transform: translate(-1px, -1px) rotate(1deg);
+    }
+     90% {
+         transform: translate(1px, 2px) rotate(0deg);
+    }
+     100% {
+         transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+ input:required, textarea:required, select:required {
+     box-shadow: 2px 2px 2px rgba(200, 0, 0, 0.85);
+}
+ input:required:focus, textarea:required:focus, select:required:focus {
+     outline: none !important;
+     border: 1px solid red;
+}
+ input:required:hover, textarea:required:hover, select:required:hover {
+     opacity: 1;
+}
+ .comment-text {
+     padding: 5px;
+     font-size: 14px;
+     width: 100%;
+     border-radius: 5px;
+     border-color: DodgerBlue;
+}
+ .comment-text:focus {
+     outline: none !important;
+     box-shadow: 0 0 10px #719ECE;
+}
+ .star-rating {
+     display: flex;
+     flex-direction: row-reverse;
+     justify-content: flex-end;
+}
+ .star-rating>input {
+     display: none
+}
+ .star-rating>label {
+     position: relative;
+     width: 1em;
+     font-size: 32px;
+     color: DarkGoldenRod;
+     cursor: pointer
+}
+ .star-rating>label::before {
+     content: "\2605";
+     position: absolute;
+     opacity: 0
+}
+ .star-rating>label:hover:before, .star-rating>label:hover~label:before {
+     opacity: 1 !important
+}
+ .star-rating>input:checked~label:before {
+     opacity: 1
+}
+ .star-rating:hover>input:checked~label:before {
+     opacity: 0.4
+}
+ .splitter {
+     width: 500px;
+     height: 100px;
+     display: flex;
+}
+ .iris-table {
+     border-collapse: collapse;
+     width: 100%;
+     margin-bottom: 20px;
+}
+ .iris-td {
+     text-align: left;
+     padding: 8px;
+     color: black;
+}
+ .iris-tr:nth-child(even) {
+     background-color: Snow;
+}
+ .iris-th {
+     padding: 8px;
+     text-align: left;
+     background-color: LightSteelBlue;
+     color: white;
+}

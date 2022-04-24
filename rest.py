@@ -11,6 +11,8 @@ from flask_cors import CORS
 from text_response import TextResponse
 
 UPLOAD_FOLDER = './temp'
+TIKA_SERVER = 'http://localhost'
+TIKA_PORT = '8085'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -31,30 +33,13 @@ def to_json_array(list):
 
 # Route to serve static resources
 @app.route('/resources/<path:path>')
-def send_report(path):
+def send_resources(path):
     return send_from_directory('resources', path)
 
-# The home page rout
+# The home page route
 @app.route("/")
 def hello_world(name=None):
-    return render_template('home.html', name=name)
-
-@app.route('/api/v1.0/upload', methods=['POST'])
-def upload_file():
-    response = FileResponse("")
-    response.sucess = False
-    if 'file' not in request.files:
-        return Response(response.toJSON(),  mimetype='application/json')
-    file = request.files['file']
-    response.original_filename = file.filename
-    if file and response.allowed_file():
-        extension = response.get_extnesion()
-        temp_name = next(tempfile._get_candidate_names()) + "." + extension
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], temp_name))
-        response.filename = temp_name
-        response.sucess = True
-    return Response(response.toJSON(),  mimetype='application/json')
-
+    return render_template('index.html', tika_server=TIKA_SERVER + ':' + TIKA_PORT)
 
 @app.route('/api/v1.0/data/sanitize', methods=['POST'])
 def get_sanitized_text():

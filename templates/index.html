@@ -1,0 +1,206 @@
+<!--
+  ~ Copyright (c) 2021. K2-Software
+  ~ All software, both binary and source published by K2-Software (hereafter, Software) is copyrighted by the
+  ~ author (hereafter, K2-Software) and ownership of all right, title and interest in and to the Software remains
+  ~ with K2-Software. By using or copying the Software, User agrees to abide by the terms of this Agreement.
+  -->
+
+<!DOCTYPE HTML>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Text Tagger</title>
+
+    <link rel="shortcut icon" type="image/ico" href="/resources/favicon.ico">
+
+    <link rel="stylesheet" href="/resources/css/site.css"/>
+
+    <link rel="stylesheet" href="/resources/dist/bootstrap-4.3.1/css/bootstrap.min.css"/>
+
+    <script src="/resources/dist/jquery-3.6.0/jquery.min.js"></script>
+    <script src="/resources/dist/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+    <script src="/resources/dist/angularjs-1.8.2/angular.min.js"></script>
+
+</head>
+<body ng-app="categoryConfigApp">
+
+<script type="text/javascript">
+    var app = angular.module("categoryConfigApp", []);
+
+    app.controller("categoryConfigCtrl", function($scope, $http)
+    {
+        /*<![CDATA[*/
+        $scope.lang = '[[${lang}]]';
+        /*]]>*/
+
+        $scope.theText = '';
+        $scope.theStats = '';
+        $scope.theResult = '';
+        $scope.class = 'general';
+        $scope.tag = 'TBD';
+
+        $scope.setClass = function(event)
+        {
+            $scope.theResult = $scope.class + '\t' + toSingleTrimmedLine($scope.theText);
+        }
+
+        $scope.tagNER = function(event)
+        {
+            var txtArea = document.getElementById("the-text");
+
+            var start = txtArea.selectionStart;
+            var finish = txtArea.selectionEnd;
+
+            // If nothing selected just return
+            if (start == finish) return;
+
+            var rawSel = txtArea.value.substring(start, finish);
+            var sel = rawSel.trim();
+            if (sel.length != rawSel.length)
+            {
+                var startPos = rawSel.search(sel);
+                if (startPos == 0)
+                {
+                    finish = finish - (rawSel.length - sel.length);
+                }
+                if (startPos > 0)
+                {
+                    start = start + startPos;
+                    finish = start + sel.length;
+                }
+            }
+
+            var before = txtArea.value.substring(0, start);
+            var after = txtArea.value.substring(finish);
+            sel = '<START:' + $scope.tag + '>' + sel + '<END>';
+
+            $scope.theText = before + sel + after;
+       }
+
+        $scope.uploadData = function ()
+        {
+            if( document.getElementById("singleFileUploadInput").files.length == 0 )
+            {
+                return;
+            }
+
+            var theFile = document.getElementById("singleFileUploadInput").files[0];
+            var fileurl = "{{ tika_server }}" + "/tika/gettext?type=content";
+
+            if (theFile != null) $scope.uploadFileToUrl(theFile, fileurl);
+
+        };
+
+        $scope.uploadFileToUrl = function(file, uploadUrl)
+        {
+            var formData = new FormData();
+            formData.append("file", file);
+
+            var method = "POST";
+            $http({
+                method: method,
+                url: uploadUrl,
+                data: formData,
+                headers: {
+                    'Content-Type': undefined
+                }
+            }).then(function successCallback(response)
+                {
+                    // We were able to up load the file
+                    $scope.theText = response.data.result;
+                }, function errorCallback(response)
+                {
+                    showFailure(response);
+                });
+        }
+    });
+</script>
+
+<main class="container-fluid iris-main" ng-controller="categoryConfigCtrl" role="main">
+
+    <div class="row mb-3">
+        <div class="col">
+            <h4>Text Tagger</h4>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-4">
+            <div class="row mb-3">
+                <div class="col-8">
+                    <div class="input-group">
+                        <input class="btn btn-primary" id="singleFileUploadInput" name="thefile" type="file"/>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="input-group">
+                        <button class="btn btn-primary" id="uploadButton" ng-click="uploadData()">
+                            Upload
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-8">
+                    <input class="form-control" id="tagger-text" ng-model="tag" type="text">
+                </div>
+                <div class="col">
+                    <button class="btn btn-primary" id="tagger-button" ng-click="tagNER($event)">
+                        Tag text
+                    </button>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-8">
+                    <input class="form-control" id="class" ng-model="class" type="text">
+                </div>
+                <div class="col">
+                    <button class="btn btn-primary" id="set-class" ng-click="setClass($event)">
+                        Set Category
+                    </button>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="the-stats">
+                        <h6>
+                            <i class="fas fa-glasses"></i> Document Statistics
+                        </h6>
+                    </label>
+                    <textarea id="the-stats" ng-model="theStats" type="text"
+                              class="form-control" rows="10" readonly>
+                    </textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-8">
+            <label for="the-text">
+                <h5>
+                    <i class="fas fa-align-justify"></i> Text
+                </h5>
+            </label>
+            <textarea id="the-text" ng-model="theText" type="text"
+                      class="form-control" rows="20">
+        </textarea>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col">
+            <label for="the-result">
+                <h6>
+                    <i class="fas fa-robot"></i> Text
+                </h6>
+            </label>
+            <textarea id="the-result" ng-model="theResult" type="text"
+                      class="form-control" rows="2" readonly>
+        </textarea>
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>
