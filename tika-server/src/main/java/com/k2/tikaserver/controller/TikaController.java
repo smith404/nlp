@@ -1,10 +1,10 @@
 package com.k2.tikaserver.controller;
 
 import com.k2.tikaserver.TiKaUtils;
-import com.k2.tikaserver.model.DocMetaData;
+import com.k2.tikaserver.exception.BaseException;
+import com.k2.tikaserver.model.CustomPair;
 import com.k2.tikaserver.model.TextResponse;
 import com.k2.tikaserver.service.UtilsService;
-import com.k2.tikaserver.exception.BaseException;
 import org.apache.tika.metadata.Metadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/tika")
@@ -29,9 +27,7 @@ public class TikaController
                                         @RequestParam(value = "type", required = false, defaultValue = "content") String type,
                                         @RequestParam(value = "raw", required = false, defaultValue = "no") String raw, Model model)
     {
-        List<DocMetaData> dmdList = new ArrayList<>();
         TextResponse tr = new TextResponse();
-        boolean asList = false;
 
         try
         {
@@ -40,34 +36,16 @@ public class TikaController
                 String fileName = file.getOriginalFilename();
                 InputStream is = new ByteArrayInputStream(file.getBytes());
 
-                if (type.equalsIgnoreCase("metadatalist"))
                 {
-                    asList = true;
+                    String content = "";
                     Metadata theData = TiKaUtils.extractMetaDataUsingParser(is);
+                    StringBuilder sb = new StringBuilder();
                     for(String name : theData.names())
                     {
-                        DocMetaData dmd = new DocMetaData(name, theData.get(name));
-                        dmdList.add(dmd);
+                        CustomPair pair = new CustomPair(name, theData.get(name));
+                        tr.getProperties().add(pair);
                     }
-
-                }
-                else
-                {
-                    if (type.equalsIgnoreCase("metadata"))
-                    {
-                        Metadata theData = TiKaUtils.extractMetaDataUsingParser(is);
-                        StringBuilder sb = new StringBuilder();
-                        for(String name : theData.names())
-                        {
-                            DocMetaData dmd = new DocMetaData(name, theData.get(name));
-                            sb.append(dmd.prettyPrint()).append(UtilsService.NEWLINE);
-                        }
-                        tr.setProperties(sb.toString());
-
-                        is.reset();
-                    }
-
-                    String content;
+                    is.reset();
 
                     if (TiKaUtils.IsImageExtension(fileName))
                     {
@@ -77,11 +55,13 @@ public class TikaController
                     {
                         content = TiKaUtils.extractContentUsingParser(is);
                     }
+
                     if (content.trim().length() == 0 && fileName.endsWith("pdf"))
                     {
                         is.reset();
                         content = TiKaUtils.extractPdfContentUsingOCR(is);
                     }
+
                     if (type.equalsIgnoreCase("concat"))
                     {
                         content = content.replaceAll("(\\r|\\n)", (UtilsService.SPACE));
@@ -93,10 +73,7 @@ public class TikaController
 
                 is.close();
 
-                if (asList)
-                    return new ResponseEntity<>(dmdList, HttpStatus.OK);
-                else
-                    return new ResponseEntity<>(tr, HttpStatus.OK);
+                return new ResponseEntity<>(tr, HttpStatus.OK);
             }
 
             return new ResponseEntity<>(tr, HttpStatus.NO_CONTENT);

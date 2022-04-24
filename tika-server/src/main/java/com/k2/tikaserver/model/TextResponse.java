@@ -5,29 +5,20 @@
 
 package com.k2.tikaserver.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TextResponse
 {
-    private String original;
     private String result;
     private boolean success;
-    private String properties;
+    private List<CustomPair> properties;
 
     public TextResponse()
     {
-        original = "";
         result = "";
         success = true;
-        properties = "";
-    }
-
-    public String getOriginal()
-    {
-        return original;
-    }
-
-    public void setOriginal(String original)
-    {
-        this.original = original;
+        properties = new ArrayList<>();
     }
 
     public String getResult()
@@ -50,13 +41,23 @@ public class TextResponse
         this.success = sucess;
     }
 
-    public String getProperties()
+    public List<CustomPair> getProperties()
     {
         return properties;
     }
 
-    public void setProperties(String properties)
+    public void setProperties(List<CustomPair> properties)
     {
         this.properties = properties;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "TextResponse{" +
+                "result='" + result + '\'' +
+                ", success=" + success +
+                ", properties='" + properties + '\'' +
+                '}';
     }
 }
