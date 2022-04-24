@@ -1,0 +1,738 @@
+[
+    {
+        "longname": "Afar",
+        "iso2": "aa"
+    },
+    {
+        "longname": "Abkhazian",
+        "iso2": "ab"
+    },
+    {
+        "longname": "Avestan",
+        "iso2": "ae"
+    },
+    {
+        "longname": "Afrikaans",
+        "iso2": "af"
+    },
+    {
+        "longname": "Akan",
+        "iso2": "ak"
+    },
+    {
+        "longname": "Amharic",
+        "iso2": "am"
+    },
+    {
+        "longname": "Aragonese",
+        "iso2": "an"
+    },
+    {
+        "longname": "Arabic",
+        "iso2": "ar"
+    },
+    {
+        "longname": "Assamese",
+        "iso2": "as"
+    },
+    {
+        "longname": "Avaric",
+        "iso2": "av"
+    },
+    {
+        "longname": "Aymara",
+        "iso2": "ay"
+    },
+    {
+        "longname": "Azerbaijani",
+        "iso2": "az"
+    },
+    {
+        "longname": "Bashkir",
+        "iso2": "ba"
+    },
+    {
+        "longname": "Belarusian",
+        "iso2": "be"
+    },
+    {
+        "longname": "Bulgarian",
+        "iso2": "bg"
+    },
+    {
+        "longname": "Bihari languages",
+        "iso2": "bh"
+    },
+    {
+        "longname": "Bislama",
+        "iso2": "bi"
+    },
+    {
+        "longname": "Bambara",
+        "iso2": "bm"
+    },
+    {
+        "longname": "Bengali",
+        "iso2": "bn"
+    },
+    {
+        "longname": "Tibetan",
+        "iso2": "bo"
+    },
+    {
+        "longname": "Breton",
+        "iso2": "br"
+    },
+    {
+        "longname": "Bosnian",
+        "iso2": "bs"
+    },
+    {
+        "longname": "Catalan; Valencian",
+        "iso2": "ca"
+    },
+    {
+        "longname": "Chechen",
+        "iso2": "ce"
+    },
+    {
+        "longname": "Chamorro",
+        "iso2": "ch"
+    },
+    {
+        "longname": "Corsican",
+        "iso2": "co"
+    },
+    {
+        "longname": "Cree",
+        "iso2": "cr"
+    },
+    {
+        "longname": "Czech",
+        "iso2": "cs"
+    },
+    {
+        "longname": "Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic",
+        "iso2": "cu"
+    },
+    {
+        "longname": "Chuvash",
+        "iso2": "cv"
+    },
+    {
+        "longname": "Welsh",
+        "iso2": "cy"
+    },
+    {
+        "longname": "Danish",
+        "iso2": "da"
+    },
+    {
+        "longname": "German",
+        "iso2": "de"
+    },
+    {
+        "longname": "Divehi; Dhivehi; Maldivian",
+        "iso2": "dv"
+    },
+    {
+        "longname": "Dzongkha",
+        "iso2": "dz"
+    },
+    {
+        "longname": "Ewe",
+        "iso2": "ee"
+    },
+    {
+        "longname": "Greek, Modern (1453-)",
+        "iso2": "el"
+    },
+    {
+        "longname": "English",
+        "iso2": "en"
+    },
+    {
+        "longname": "Esperanto",
+        "iso2": "eo"
+    },
+    {
+        "longname": "Spanish; Castilian",
+        "iso2": "es"
+    },
+    {
+        "longname": "Estonian",
+        "iso2": "et"
+    },
+    {
+        "longname": "Basque",
+        "iso2": "eu"
+    },
+    {
+        "longname": "Persian",
+        "iso2": "fa"
+    },
+    {
+        "longname": "Fulah",
+        "iso2": "ff"
+    },
+    {
+        "longname": "Finnish",
+        "iso2": "fi"
+    },
+    {
+        "longname": "Fijian",
+        "iso2": "fj"
+    },
+    {
+        "longname": "Faroese",
+        "iso2": "fo"
+    },
+    {
+        "longname": "French",
+        "iso2": "fr"
+    },
+    {
+        "longname": "Western Frisian",
+        "iso2": "fy"
+    },
+    {
+        "longname": "Irish",
+        "iso2": "ga"
+    },
+    {
+        "longname": "Gaelic; Scottish Gaelic",
+        "iso2": "gd"
+    },
+    {
+        "longname": "Galician",
+        "iso2": "gl"
+    },
+    {
+        "longname": "Guarani",
+        "iso2": "gn"
+    },
+    {
+        "longname": "Gujarati",
+        "iso2": "gu"
+    },
+    {
+        "longname": "Manx",
+        "iso2": "gv"
+    },
+    {
+        "longname": "Hausa",
+        "iso2": "ha"
+    },
+    {
+        "longname": "Hebrew",
+        "iso2": "he"
+    },
+    {
+        "longname": "Hindi",
+        "iso2": "hi"
+    },
+    {
+        "longname": "Hiri Motu",
+        "iso2": "ho"
+    },
+    {
+        "longname": "Croatian",
+        "iso2": "hr"
+    },
+    {
+        "longname": "Haitian; Haitian Creole",
+        "iso2": "ht"
+    },
+    {
+        "longname": "Hungarian",
+        "iso2": "hu"
+    },
+    {
+        "longname": "Armenian",
+        "iso2": "hy"
+    },
+    {
+        "longname": "Herero",
+        "iso2": "hz"
+    },
+    {
+        "longname": "Interlingua (International Auxiliary Language Association)",
+        "iso2": "ia"
+    },
+    {
+        "longname": "Indonesian",
+        "iso2": "id"
+    },
+    {
+        "longname": "Interlingue; Occidental",
+        "iso2": "ie"
+    },
+    {
+        "longname": "Igbo",
+        "iso2": "ig"
+    },
+    {
+        "longname": "Sichuan Yi; Nuosu",
+        "iso2": "ii"
+    },
+    {
+        "longname": "Inupiaq",
+        "iso2": "ik"
+    },
+    {
+        "longname": "Ido",
+        "iso2": "io"
+    },
+    {
+        "longname": "Icelandic",
+        "iso2": "is"
+    },
+    {
+        "longname": "Italian",
+        "iso2": "it"
+    },
+    {
+        "longname": "Inuktitut",
+        "iso2": "iu"
+    },
+    {
+        "longname": "Japanese",
+        "iso2": "ja"
+    },
+    {
+        "longname": "Javanese",
+        "iso2": "jv"
+    },
+    {
+        "longname": "Georgian",
+        "iso2": "ka"
+    },
+    {
+        "longname": "Kongo",
+        "iso2": "kg"
+    },
+    {
+        "longname": "Kikuyu; Gikuyu",
+        "iso2": "ki"
+    },
+    {
+        "longname": "Kuanyama; Kwanyama",
+        "iso2": "kj"
+    },
+    {
+        "longname": "Kazakh",
+        "iso2": "kk"
+    },
+    {
+        "longname": "Kalaallisut; Greenlandic",
+        "iso2": "kl"
+    },
+    {
+        "longname": "Central Khmer",
+        "iso2": "km"
+    },
+    {
+        "longname": "Kannada",
+        "iso2": "kn"
+    },
+    {
+        "longname": "Korean",
+        "iso2": "ko"
+    },
+    {
+        "longname": "Kanuri",
+        "iso2": "kr"
+    },
+    {
+        "longname": "Kashmiri",
+        "iso2": "ks"
+    },
+    {
+        "longname": "Kurdish",
+        "iso2": "ku"
+    },
+    {
+        "longname": "Komi",
+        "iso2": "kv"
+    },
+    {
+        "longname": "Cornish",
+        "iso2": "kw"
+    },
+    {
+        "longname": "Kirghiz; Kyrgyz",
+        "iso2": "ky"
+    },
+    {
+        "longname": "Latin",
+        "iso2": "la"
+    },
+    {
+        "longname": "Luxembourgish; Letzeburgesch",
+        "iso2": "lb"
+    },
+    {
+        "longname": "Ganda",
+        "iso2": "lg"
+    },
+    {
+        "longname": "Limburgan; Limburger; Limburgish",
+        "iso2": "li"
+    },
+    {
+        "longname": "Lingala",
+        "iso2": "ln"
+    },
+    {
+        "longname": "Lao",
+        "iso2": "lo"
+    },
+    {
+        "longname": "Lithuanian",
+        "iso2": "lt"
+    },
+    {
+        "longname": "Luba-Katanga",
+        "iso2": "lu"
+    },
+    {
+        "longname": "Latvian",
+        "iso2": "lv"
+    },
+    {
+        "longname": "Malagasy",
+        "iso2": "mg"
+    },
+    {
+        "longname": "Marshallese",
+        "iso2": "mh"
+    },
+    {
+        "longname": "Maori",
+        "iso2": "mi"
+    },
+    {
+        "longname": "Macedonian",
+        "iso2": "mk"
+    },
+    {
+        "longname": "Malayalam",
+        "iso2": "ml"
+    },
+    {
+        "longname": "Mongolian",
+        "iso2": "mn"
+    },
+    {
+        "longname": "Marathi",
+        "iso2": "mr"
+    },
+    {
+        "longname": "Malay",
+        "iso2": "ms"
+    },
+    {
+        "longname": "Maltese",
+        "iso2": "mt"
+    },
+    {
+        "longname": "Burmese",
+        "iso2": "my"
+    },
+    {
+        "longname": "Nauru",
+        "iso2": "na"
+    },
+    {
+        "longname": "Bokm\u00e5l, Norwegian; Norwegian Bokm\u00e5l",
+        "iso2": "nb"
+    },
+    {
+        "longname": "Ndebele, North; North Ndebele",
+        "iso2": "nd"
+    },
+    {
+        "longname": "Nepali",
+        "iso2": "ne"
+    },
+    {
+        "longname": "Ndonga",
+        "iso2": "ng"
+    },
+    {
+        "longname": "Dutch; Flemish",
+        "iso2": "nl"
+    },
+    {
+        "longname": "Norwegian Nynorsk; Nynorsk, Norwegian",
+        "iso2": "nn"
+    },
+    {
+        "longname": "Norwegian",
+        "iso2": "no"
+    },
+    {
+        "longname": "Ndebele, South; South Ndebele",
+        "iso2": "nr"
+    },
+    {
+        "longname": "Navajo; Navaho",
+        "iso2": "nv"
+    },
+    {
+        "longname": "Chichewa; Chewa; Nyanja",
+        "iso2": "ny"
+    },
+    {
+        "longname": "Occitan (post 1500)",
+        "iso2": "oc"
+    },
+    {
+        "longname": "Ojibwa",
+        "iso2": "oj"
+    },
+    {
+        "longname": "Oromo",
+        "iso2": "om"
+    },
+    {
+        "longname": "Oriya",
+        "iso2": "or"
+    },
+    {
+        "longname": "Ossetian; Ossetic",
+        "iso2": "os"
+    },
+    {
+        "longname": "Panjabi; Punjabi",
+        "iso2": "pa"
+    },
+    {
+        "longname": "Pali",
+        "iso2": "pi"
+    },
+    {
+        "longname": "Polish",
+        "iso2": "pl"
+    },
+    {
+        "longname": "Pushto; Pashto",
+        "iso2": "ps"
+    },
+    {
+        "longname": "Portuguese",
+        "iso2": "pt"
+    },
+    {
+        "longname": "Quechua",
+        "iso2": "qu"
+    },
+    {
+        "longname": "Romansh",
+        "iso2": "rm"
+    },
+    {
+        "longname": "Rundi",
+        "iso2": "rn"
+    },
+    {
+        "longname": "Romanian; Moldavian; Moldovan",
+        "iso2": "ro"
+    },
+    {
+        "longname": "Russian",
+        "iso2": "ru"
+    },
+    {
+        "longname": "Kinyarwanda",
+        "iso2": "rw"
+    },
+    {
+        "longname": "Sanskrit",
+        "iso2": "sa"
+    },
+    {
+        "longname": "Sardinian",
+        "iso2": "sc"
+    },
+    {
+        "longname": "Sindhi",
+        "iso2": "sd"
+    },
+    {
+        "longname": "Northern Sami",
+        "iso2": "se"
+    },
+    {
+        "longname": "Sango",
+        "iso2": "sg"
+    },
+    {
+        "longname": "Sinhala; Sinhalese",
+        "iso2": "si"
+    },
+    {
+        "longname": "Slovak",
+        "iso2": "sk"
+    },
+    {
+        "longname": "Slovenian",
+        "iso2": "sl"
+    },
+    {
+        "longname": "Samoan",
+        "iso2": "sm"
+    },
+    {
+        "longname": "Shona",
+        "iso2": "sn"
+    },
+    {
+        "longname": "Somali",
+        "iso2": "so"
+    },
+    {
+        "longname": "Albanian",
+        "iso2": "sq"
+    },
+    {
+        "longname": "Serbian",
+        "iso2": "sr"
+    },
+    {
+        "longname": "Swati",
+        "iso2": "ss"
+    },
+    {
+        "longname": "Sotho, Southern",
+        "iso2": "st"
+    },
+    {
+        "longname": "Sundanese",
+        "iso2": "su"
+    },
+    {
+        "longname": "Swedish",
+        "iso2": "sv"
+    },
+    {
+        "longname": "Swahili",
+        "iso2": "sw"
+    },
+    {
+        "longname": "Tamil",
+        "iso2": "ta"
+    },
+    {
+        "longname": "Telugu",
+        "iso2": "te"
+    },
+    {
+        "longname": "Tajik",
+        "iso2": "tg"
+    },
+    {
+        "longname": "Thai",
+        "iso2": "th"
+    },
+    {
+        "longname": "Tigrinya",
+        "iso2": "ti"
+    },
+    {
+        "longname": "Turkmen",
+        "iso2": "tk"
+    },
+    {
+        "longname": "Tagalog",
+        "iso2": "tl"
+    },
+    {
+        "longname": "Tswana",
+        "iso2": "tn"
+    },
+    {
+        "longname": "Tonga (Tonga Islands)",
+        "iso2": "to"
+    },
+    {
+        "longname": "Turkish",
+        "iso2": "tr"
+    },
+    {
+        "longname": "Tsonga",
+        "iso2": "ts"
+    },
+    {
+        "longname": "Tatar",
+        "iso2": "tt"
+    },
+    {
+        "longname": "Twi",
+        "iso2": "tw"
+    },
+    {
+        "longname": "Tahitian",
+        "iso2": "ty"
+    },
+    {
+        "longname": "Uighur; Uyghur",
+        "iso2": "ug"
+    },
+    {
+        "longname": "Ukrainian",
+        "iso2": "uk"
+    },
+    {
+        "longname": "Urdu",
+        "iso2": "ur"
+    },
+    {
+        "longname": "Uzbek",
+        "iso2": "uz"
+    },
+    {
+        "longname": "Venda",
+        "iso2": "ve"
+    },
+    {
+        "longname": "Vietnamese",
+        "iso2": "vi"
+    },
+    {
+        "longname": "Volap\u00fck",
+        "iso2": "vo"
+    },
+    {
+        "longname": "Walloon",
+        "iso2": "wa"
+    },
+    {
+        "longname": "Wolof",
+        "iso2": "wo"
+    },
+    {
+        "longname": "Xhosa",
+        "iso2": "xh"
+    },
+    {
+        "longname": "Yiddish",
+        "iso2": "yi"
+    },
+    {
+        "longname": "Yoruba",
+        "iso2": "yo"
+    },
+    {
+        "longname": "Zhuang; Chuang",
+        "iso2": "za"
+    },
+    {
+        "longname": "Chinese",
+        "iso2": "zh"
+    },
+    {
+        "longname": "Zulu",
+        "iso2": "zu"
+    }
+]

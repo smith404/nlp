@@ -1,6 +1,9 @@
 #!flask/bin/python
 import os
 import tempfile
+import json
+
+from langdetect import detect
 
 from language_processor import LanguageProcessor
 from file_response import FileResponse
@@ -20,6 +23,9 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
 
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+language_data = open('languages.json')
+languages = json.load(language_data)
+
 def to_json_array(list):
     results = '['
     first = True
@@ -31,15 +37,18 @@ def to_json_array(list):
     results = results + ']'
     return results
 
+
 # Route to serve static resources
 @app.route('/resources/<path:path>')
 def send_resources(path):
     return send_from_directory('resources', path)
 
+
 # The home page route
 @app.route("/")
 def hello_world(name=None):
     return render_template('index.html', tika_server=TIKA_SERVER + ':' + TIKA_PORT)
+
 
 @app.route('/api/v1.0/data/sanitize', methods=['POST'])
 def get_sanitized_text():
@@ -48,6 +57,17 @@ def get_sanitized_text():
     tr = TextResponse(lp.tokens_to_string(lp.remove_stops()))
     tr.remove_punctuation()    
     return Response(tr.toJSON(),  mimetype='application/json')
+
+
+@app.route('/api/v1.0/data/language', methods=['POST'])
+def get_text_language():
+    body_text = request.get_data(as_text=True)
+    iso2 = detect(body_text)
+    item = { "longname": "unknown", "iso2": "xx"}
+    items = [lang for lang in languages if lang['iso2'] == iso2]
+    if len(items) > 0:
+        item = items[0]
+    return Response(json.dumps(item),  mimetype='application/json')
 
 
 @app.route('/api/v1.0/data/tokens', methods=['POST'])
@@ -60,28 +80,28 @@ def get_tokens_from_text():
     else:
         return Response(to_json_array(lp.pos()),  mimetype='application/json')
 
-@app.route('/api/v1.0/entities', methods=['GET'])
+@app.route('/api/v1.0/entities', methods=['POST'])
 def get_entities():
     body_text = request.get_data(as_text=True)
     lp = LanguageProcessor(body_text)
     return Response(to_json_array(lp.entities()),  mimetype='application/json')
 
 
-@app.route('/api/v1.0/entities/<string:kind>', methods=['GET'])
+@app.route('/api/v1.0/entities/<string:kind>', methods=['POST'])
 def get_entities_of_kind(kind):
     body_text = request.get_data(as_text=True)
     lp = LanguageProcessor(body_text)
     return Response(to_json_array(lp.entities_of_lind(kind)),  mimetype='application/json')
 
 
-@app.route('/api/v1.0/sentences', methods=['GET'])
+@app.route('/api/v1.0/sentences', methods=['POST'])
 def get_sentences():
     body_text = request.get_data(as_text=True)
     lp = LanguageProcessor(body_text)
     return Response(to_json_array(lp.sentences()),  mimetype='application/json')
 
 
-@app.route('/api/v1.0/match/<string:matcher>', methods=['GET'])
+@app.route('/api/v1.0/match/<string:matcher>', methods=['POST'])
 def get_entities_with_matcher(matcher):
     body_text = request.get_data(as_text=True)
     lp = LanguageProcessor(body_text)
