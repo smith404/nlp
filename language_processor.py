@@ -8,9 +8,7 @@ from span import Span
 from spacy.pipeline import EntityRuler
 from spacy.matcher import Matcher
 
-from sentiment import SpacyTextBlob, Seniment
-
-nlp = spacy.load('en_core_web_trf')
+nlp = spacy.load('en_core_web_sm')
 
 # Add bespoke patters for entity recognition
 data = open('patterns.json')
@@ -21,9 +19,6 @@ bespoke_ruler.add_patterns(bespoke_patterns)
 # Read matcher index
 index = open('matchers/index.json')
 known_matchers = json.load(index)
-
-# Add sentiment pipeline
-nlp.add_pipe('spacytextblob')
 
 class LanguageProcessor:
     def __init__(self, text):
@@ -52,26 +47,6 @@ class LanguageProcessor:
     def text(self):
         del self._text
 
-    def add_white_list(self, list):
-        token_list = list.split(self.LIST_DELIMITER)
-        if len(token_list) == 0:
-            return
-        white_patterns = []
-        for token in token_list:
-            white_patterns.append({'label': 'WHITE', 'pattern': token})
-        bespoke_ruler.patterns.append(white_patterns)
-        print(bespoke_ruler.patterns)
-
-    def add_black_list(self, list):
-        token_list = list.split(self.LIST_DELIMITER)
-        if len(token_list) == 0:
-            return
-        black_patterns = []
-        for token in token_list:
-            black_patterns.append({'label': 'BLACK', 'pattern': token})
-        bespoke_ruler.patterns.append(black_patterns)
-        print(bespoke_ruler.patterns)
-
     def pos(self):
         results = []
         for token in self._doc:
@@ -96,7 +71,7 @@ class LanguageProcessor:
                 entity.start_char, entity.end_char))
         return results
 
-    def entities_of_lind(self, kind):
+    def entities_of_kind(self, kind):
         results = []
         for entity in self._doc.ents:
             if entity.label_ == kind:
@@ -110,9 +85,6 @@ class LanguageProcessor:
             results.append(Span(sentence.text, 'sentence', \
                 sentence.start_char, sentence.end_char, sentence.sentiment))
         return results
-
-    def sentiment(self):
-        return Seniment(self._doc.text, self._doc._.polarity, self._doc._.subjectivity, self._doc._.assessments)
 
     def remove_stops(self):
         results = []
