@@ -1,0 +1,25 @@
+application:
+  basename: tika-server
+  environment: DEV
+
+logging:
+  level:
+    com:
+      k2:
+        tika-server: TRACE
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: "true"
+  session:
+    tracking-modes: cookie
+  error:
+    path: /error
+  port: "8085"
+
+spring:
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: "false"
