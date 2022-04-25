@@ -86,6 +86,33 @@ class LanguageProcessor:
                 sentence.start_char, sentence.end_char, sentence.sentiment))
         return results
 
+    def paragraphs(self, limit):
+        results = []
+        lastSpan = None
+        merge = False
+        for sentence in self._doc.sents:
+            if lastSpan is None:
+                lastSpan = Span(sentence.text, 'paragraph', sentence.start_char, sentence.end_char)
+                continue
+            if sentence.end_char - sentence.start_char == 1:
+                merge = True
+            elif lastSpan.end + 1 == sentence.start_char:
+                merge = True
+            else:
+                merge = False
+            if merge:
+                merge = False
+                lastSpan.text = lastSpan.text + ' ' + sentence.text
+                lastSpan.end = sentence.end_char
+                continue
+            else:
+                if len(lastSpan.text.strip()) > limit:    
+                    results.append(lastSpan)
+            lastSpan = Span(sentence.text, 'paragraph', sentence.start_char, sentence.end_char)
+        if len(lastSpan.text.strip()) > limit:
+            results.append(lastSpan)
+        return results
+
     def remove_stops(self):
         results = []
         for token in self._doc:

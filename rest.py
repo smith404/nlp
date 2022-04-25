@@ -103,24 +103,16 @@ def get_sentences():
 
 @app.route('/api/v1.0/paragraphs', methods=['POST'])
 def get_paragraphs():
+    limit = request.args.get("limit")
+    if limit is None:
+        limit = 0
+    try:
+        limit_int = int(limit)
+    except ValueError:
+        limit_int = 0
     body_text = request.get_data(as_text=True)
     lp = LanguageProcessor(body_text)
-    sentences = lp.sentences()
-    results = []
-    lastSpan = None
-    merge = False
-    for para in sentences:
-        if merge:
-            merge = False
-            continue
-        if lastSpan is None:
-            lastSpan = para
-            continue
-        if len(para.text.trim()) == 0 and (para.end - para.start) == 1:
-            merge = True
-        else:
-            results.append(para)
-    return Response(to_json_array(results),  mimetype='application/json')
+    return Response(to_json_array(lp.paragraphs(limit_int)),  mimetype='application/json')
 
 
 @app.route('/api/v1.0/match/<string:matcher>', methods=['POST'])
