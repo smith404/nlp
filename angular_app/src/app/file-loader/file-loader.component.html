@@ -1,0 +1,17 @@
+<div *ngIf="loading" class="loading-indicator">
+    <mat-spinner color="accent"></mat-spinner>
+</div>                
+<input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload>
+<div class="file-upload">
+    {{fileName || "No file uploaded yet."}}
+    <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
+        <mat-icon>attach_file</mat-icon>
+    </button>
+</div>
+<mat-form-field class="full-width" appearance="outline">
+    <mat-label>Contents</mat-label>
+    <textarea matInput rows="20" placeholder="Contents" [(ngModel)]="_response.body" 
+    cdkAutosizeMinRows="10"
+    cdkAutosizeMaxRows="40"></textarea>
+</mat-form-field>
+

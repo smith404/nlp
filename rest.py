@@ -116,7 +116,7 @@ def get_paragraphs():
         if lastSpan is None:
             lastSpan = para
             continue
-        if len(para.text.trim()) == 0 and para.end - para.start == 1:
+        if len(para.text.trim()) == 0 and (para.end - para.start) == 1:
             merge = True
         else:
             results.append(para)

@@ -1,0 +1,209 @@
+<mat-toolbar color="primary" class="navbar">
+    <div>
+        <button (click)="sidenav.toggle()" mat-icon-button><mat-icon>menu</mat-icon></button>
+        {{brand}}
+    </div>
+    <div>
+        <button mat-icon-button><mat-icon>info</mat-icon></button>
+    </div>
+</mat-toolbar>
+
+<mat-sidenav-container>
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened">
+        <mat-list>
+            <mat-list-item>
+                <mat-slide-toggle [(ngModel)]="isTrainingMode">Input Mode: {{isTrainingMode ? "Training" : "Testing"}}</mat-slide-toggle>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-slide-toggle (change)="onMetaDataSelected($event)" [(ngModel)]="readMetaData">Read Meta Data</mat-slide-toggle>
+            </mat-list-item>
+            <mat-list-item>
+                <mat-slide-toggle (change)="onOtherSelected($event)" [(ngModel)]="autoRemoveWhiteSpace">Remove All White Space</mat-slide-toggle>
+            </mat-list-item>
+            <mat-list-item>
+                <mat-slide-toggle (change)="onOtherSelected($event)" [(ngModel)]="autoRemoveDuplicateBlankLines">Remove Multiple Blank Lines</mat-slide-toggle>
+            </mat-list-item>
+            <mat-list-item>
+                <mat-slide-toggle (change)="onOtherSelected($event)" [(ngModel)]="autoMakeAlphaNumeric">Make Alphanumeric</mat-slide-toggle>
+            </mat-list-item>
+            <mat-list-item>
+                <mat-slide-toggle (change)="onOtherSelected($event)" [(ngModel)]="autoSingleTrimmedLine">Single Trimmed Line</mat-slide-toggle>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+        </mat-list>
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Bearer Token</mat-label>
+            <textarea id="entity-text" matInput rows="10" placeholder="Token" [(ngModel)]="bearerToken"
+            cdkAutosizeMinRows="10"
+            cdkAutosizeMaxRows="40"></textarea>
+        </mat-form-field>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <mat-tab-group #tabRef>
+            <mat-tab label="Entity Model">
+                <button (click)="onClearNERText()" mat-fab color="accent">Clear</button>
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Model
+                    </mat-label>
+                    <mat-select [(ngModel)]="selectedModels" multiple>
+                        <mat-option *ngFor="let item of models" [value]="item">{{item.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-slider thumbLabel [(ngModel)]="minProbability" [displayWith]="formatLabel"  tickInterval="1"
+                    step="1"
+                    min="0"
+                    max="100"
+                    aria-label="units">
+                </mat-slider>
+                <button (click)="onUseEntityModel()" mat-fab color="primary">Run</button>
+                <button (click)="onFilterEntityResults()" mat-fab color="primary">Apply</button>
+                <button (click)="tagNER('entity-text')" mat-fab color="accent">TAG</button>
+                <button (click)="onCreateNERModel()" mat-fab color="accent">Train</button>
+                <button (click)="onToClauses()" mat-fab color="accent">Clauses</button>
+
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>Results</mat-label>
+                    <textarea id="entity-text" matInput rows="10" placeholder="Results" [(ngModel)]="uploadedFile.foot"
+                    cdkAutosizeMinRows="10"
+                    cdkAutosizeMaxRows="40"></textarea>
+                </mat-form-field>
+
+                <table mat-table matSort [dataSource]="diplayedNamedEntities" class="mat-elevation-z8">
+                      <ng-container matColumnDef="type">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.type}} </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Model Name </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.name}} </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="value">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Value </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.value}} </td>
+                      </ng-container>
+                    
+                      <ng-container matColumnDef="probability">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Proabability </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.probability | percent}} </td>
+                      </ng-container>   
+
+                      <ng-container matColumnDef="start">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Start </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.start}} </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="length">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Length </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.length}} </td>
+                      </ng-container>
+
+                      <tr mat-header-row *matHeaderRowDef="displayedEntityColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: displayedEntityColumns;"></tr>
+                </table>
+            </mat-tab>
+
+            <mat-tab label="Category Model">
+                <button (click)="onClearCatText()" mat-fab color="accent">Clear</button>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Category
+                    </mat-label>
+                    <mat-select [(ngModel)]="selectedCategory">
+                        <mat-option *ngFor="let item of categorizers" [value]="item">{{item.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <button (click)="onModelCatClick()" mat-fab color="primary">{{isTrainingMode ? "New" : "Run"}}</button>
+        
+                <mat-form-field *ngIf="isTrainingMode" appearance="outline">
+                    <mat-label>Categorizer Name</mat-label>
+                    <input matInput required type="text" [(ngModel)]="categoryName" maxlength="30">
+                    <mat-hint>Maximum 30 characters</mat-hint>
+                    <mat-error *ngIf="categoryName.length == 0">Please Enter a name</mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>{{isTrainingMode ? "Training Data" : "Test Data"}}</mat-label>
+                    <textarea matInput rows="15" placeholder="Training Data" [(ngModel)]="uploadedFile.head"
+                    cdkAutosizeMinRows="10"
+                    cdkAutosizeMaxRows="40"></textarea>
+                </mat-form-field>
+
+                <table mat-table matSort [dataSource]="predictions" class="mat-elevation-z8">
+                    <ng-container matColumnDef="model">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Model Name </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.model}} </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="category">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Categoery </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.category}} </td>
+                      </ng-container>
+                    
+                      <ng-container matColumnDef="probability">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Proabability </th>
+                        <td mat-cell *matCellDef="let pos"> {{pos.probability | percent}} </td>
+                      </ng-container>   
+
+                      <tr mat-header-row *matHeaderRowDef="displayedCategoryColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: displayedCategoryColumns;"></tr>
+                </table>                
+            </mat-tab>
+
+            <mat-tab label="Parts of Speech">
+                <app-file-loader [content]="stuff" (contentChange)="stuff=$event"></app-file-loader>                
+            </mat-tab>
+
+            <mat-tab label="Document Tagging">
+                <div *ngIf="loading" class="loading-indicator">
+                    <mat-spinner color="accent"></mat-spinner>
+                </div>                
+                <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload>
+                <div class="file-upload">
+                    {{fileName || "No file uploaded yet."}}
+                    <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
+                        <mat-icon>attach_file</mat-icon>
+                    </button>
+                </div>
+
+                <button (click)="clearDocumentTags()" mat-fab color="accent">Clear</button>
+                <button (click)="tagDocument()" mat-fab color="primary">Tag</button>
+                <button (click)="this.uploadedFile.removeWhiteSpace()" mat-raised-button>Remove White Space</button>
+                <button (click)="this.uploadedFile.singleTrimmedLine()" mat-raised-button>Make One Line</button>
+                <button (click)="this.uploadedFile.makeAlphaNumeric()" mat-raised-button>Make Alphanumeric</button>
+                <button (click)="this.uploadedFile.removeDuplicateBlankLines()" mat-raised-button>Remove Duplicate Lines</button>
+                <button (click)="getSentences()" mat-fab color="accent">Test</button>
+
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>Contents</mat-label>
+                    <textarea matInput rows="20" placeholder="Contents" [(ngModel)]="uploadedFile.body" 
+                    cdkAutosizeMinRows="10"
+                    cdkAutosizeMaxRows="40"></textarea>
+                </mat-form-field>
+
+                <mat-form-field class="tag-list">
+                    <mat-label>Suggested Document Tags</mat-label>
+                    <mat-chip-list aria-label="Suggested Document Tags">
+                        <mat-chip *ngFor="let tag of docTags" [selectable]="selectable" [removable]="removable" (removed)="removeDocumentTag(tag)">
+                        {{tag.type}}: {{tag.value}}
+                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                      </mat-chip>
+                    </mat-chip-list>
+                </mat-form-field>                
+            </mat-tab>
+
+            <mat-tab label="Document Redaction">
+                <button mat-raised-button (click)="openSnackBar('Term deleted', 'Dismiss',3000)">Show snack-bar</button>
+
+                <app-doc-clause *ngFor="let clause of clauses" [clause]="clause"></app-doc-clause>                
+            </mat-tab>
+        </mat-tab-group>
+        
+    </mat-sidenav-content>
+</mat-sidenav-container>
