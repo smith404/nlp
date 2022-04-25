@@ -39,7 +39,7 @@
 
         $scope.readClauses = function(event)
         {
-            var target_url = "api/v1.0/sentences";
+            var target_url = "api/v1.0/paragraphs?limit=20";
             var method = "POST";
             $http({
                 method: method,
@@ -221,11 +221,13 @@
                 <table id="the-paragraphs" class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Text</th>
+                            <th scope="col">id</th>
+                            <th scope="col" style="width:90%">Text</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="satz in theSentences">
+                            <td ng-bind="satz.id"></td>
                             <td ng-bind="satz.text"></td>
                         </tr>
                     </tbody>

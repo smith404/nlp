@@ -71,6 +71,11 @@ class IManageSession:
         header['Content-Type'] = type
         return header
 
+    def get_object_with_id(self, id, domain):
+            url = domain + '/' + id
+            body = self.get_imanage_data(url)
+            return self.create_object(body)
+            
     def get_imanage_data(self, url_path):
         url = self.baseURL + url_path
         try:
