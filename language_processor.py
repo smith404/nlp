@@ -32,8 +32,14 @@ class LanguageProcessor:
         result = ""
         for token in tokens:
             result = result + token.lemma + " "
-        
         return result
+
+    @staticmethod
+    def compare(text1, text2 ):
+        doc1 = nlp( text1 )
+        doc2 = nlp( text2 )
+        similarity = doc1.similarity( doc2 )
+        return similarity
 
     @property            
     def text(self): 

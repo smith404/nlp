@@ -122,5 +122,15 @@ def get_entities_with_matcher(matcher):
     return Response(to_json_array(lp.matcher(matcher)),  mimetype='application/json')
 
 
+@app.route('/api/v1.0/compare', methods=['POST'])
+def compare_text():
+    body = request.json
+    text1 = body['first']
+    text2 = body['second']
+    result = {}
+    result['similarity'] = LanguageProcessor.compare(text1, text2)
+    print(LanguageProcessor.compare(text1, text2))
+    return Response(json.dumps(result),  mimetype='application/json')
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')   

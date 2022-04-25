@@ -5,7 +5,7 @@ class TextCompare:
     def __init__(self, first, second):
         self._first_text = first
         self._second_text = second
-        self._score = True
+        self._score = 0
 
     @property            
     def score(self): 
