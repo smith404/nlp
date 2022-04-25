@@ -23,7 +23,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
 
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-language_data = open('languages.json')
+language_data = open('data/languages.json')
 languages = json.load(language_data)
 
 def to_json_array(list):

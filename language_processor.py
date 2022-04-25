@@ -11,7 +11,7 @@ from spacy.matcher import Matcher
 nlp = spacy.load('en_core_web_sm')
 
 # Add bespoke patters for entity recognition
-data = open('patterns.json')
+data = open('data/patterns.json')
 bespoke_patterns = json.load(data)
 bespoke_ruler = nlp.add_pipe('entity_ruler', before='ner')
 bespoke_ruler.add_patterns(bespoke_patterns)
