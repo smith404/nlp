@@ -159,18 +159,46 @@ class IManageSession:
             self.state = 500
         return {}
 
-    def get_workspaces(self, offset = 0):
-        response = self.get_imanage_data('workspaces/search?offset=' + str(offset))
-        workspaces = []
+    def get_objects(self, domain, offset = 0):
+        domain_str = domain
+        if isinstance(domain, (ObjectType)):
+            domain_str = ObjectType.domain(domain)
+        response = self.session.get_imanage_data(domain_str + '/search?offset=' + str(offset))
+        items = []
         if 'data' not in response:
-            return workspaces
-        workspaceData = response['data']
-        for workspaceObject in workspaceData:
-            # Create an object with the workspace data
-            workspace = IManageSession.create_object(workspaceObject)
-            # Add the session that read the workspace to the child object 
-            workspace.session = self
-            workspaces.append(workspace)
-        return workspaces
-       
+            return items
+        itemData = response['data']
+        for itemObject in itemData:
+            item = self.session.create_object(itemObject)
+            item.session = self.session
+            items.append(item)
+        return items
 
+    def get_recent_objects(self, domain, offset = 0):
+        domain_str = domain
+        if isinstance(domain, (ObjectType)):
+            domain_str = ObjectType.domain(domain)
+        response = self.session.get_imanage_data(domain_str + '/recent?offset=' + str(offset))
+        items = []
+        if 'data' not in response:
+            return items
+        itemData = response['data']
+        for itemObject in itemData:
+            item = self.session.create_object(itemObject)
+            item.session = self.session
+            items.append(item)
+        return items
+
+    def get_object(self, domain, name):
+        domain_str = domain
+        if isinstance(domain, (ObjectType)):
+            domain_str = ObjectType.domain(domain)
+        response = self.session.get_imanage_data(domain_str + '/search?name=' + name)
+        item = None
+        if 'data' not in response:
+            return item
+        itemData = [item for item in response['data'] if item['name'] == name]
+        if len(itemData) > 0:
+            item = self.session.create_object(itemData[0])
+            item.session = self.session
+        return item

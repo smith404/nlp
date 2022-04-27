@@ -36,9 +36,9 @@ public class TextResponse
         return success;
     }
 
-    public void setSuccess(boolean sucess)
+    public void setSuccess(boolean success)
     {
-        this.success = sucess;
+        this.success = success;
     }
 
     public List<CustomPair> getProperties()
