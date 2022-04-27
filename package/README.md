@@ -1,5 +1,8 @@
-# Example Package
+# Simple python iManage interface
 
-This is a simple example package. You can use
-[Github-flavored Markdown](https://guides.github.com/features/mastering-markdown/)
-to write your content.
+Install library
+```
+pip install impy-1.0.0.tar.gz
+```
+
+

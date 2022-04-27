@@ -38,7 +38,7 @@ def to_json_array(list):
     return results
 
 
-# Route to serve static resources
+# Static route to serve static resources
 @app.route('/resources/<path:path>')
 def send_resources(path):
     return send_from_directory('resources', path)
@@ -123,7 +123,7 @@ def get_entities_with_matcher(matcher):
 
 
 @app.route('/api/v1.0/compare', methods=['POST'])
-def compare_text():
+def compare_texts():
     body = request.json
     text1 = body['first']
     text2 = body['second']
@@ -131,6 +131,23 @@ def compare_text():
     result['similarity'] = LanguageProcessor.compare(text1, text2)
     print(LanguageProcessor.compare(text1, text2))
     return Response(json.dumps(result),  mimetype='application/json')
+
+
+@app.route('/api/v1.0/comparelist', methods=['POST'])
+def compare_lists():
+    body = request.json
+    list1 = body['first']
+    list2 = body['second']
+    result = []
+    for text1 in list1:
+        result_list = []
+        for text2 in list2:
+            comparison = {}
+            comparison['result'] = LanguageProcessor.compare(text1, text2)
+            result_list.append(comparison)
+        result.append(result_list) 
+    return Response(json.dumps(result),  mimetype='application/json')
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')   
