@@ -72,7 +72,10 @@ class IManageSession:
         return header
 
     def get_object_with_id(self, id, domain):
-            url = domain + '/' + id
+            domain_str = domain
+            if isinstance(domain, (ObjectType)):
+                domain_str = ObjectType.domain(domain)
+            url = domain_str + '/' + id
             body = self.get_imanage_data(url)
             return self.create_object(body)
             
