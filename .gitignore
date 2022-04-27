@@ -354,3 +354,7 @@ MigrationBackup/
 # InteliJ
 .idea/
 target/
+
+# Python build files
+package/dist
+*.egg-info
