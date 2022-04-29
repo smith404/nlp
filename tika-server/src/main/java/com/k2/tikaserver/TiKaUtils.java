@@ -38,7 +38,7 @@ public class TiKaUtils
     public static Metadata extractMetaDataUsingParser(InputStream stream) throws IOException, SAXException, TikaException
     {
         Parser parser = new AutoDetectParser();
-        ContentHandler handler = new BodyContentHandler();
+        ContentHandler handler = new BodyContentHandler(Integer.MAX_VALUE);
         Metadata metadata = new Metadata();
         ParseContext context = new ParseContext();
 
@@ -49,7 +49,7 @@ public class TiKaUtils
     public static String extractContentUsingParser(InputStream stream) throws IOException, TikaException, SAXException
     {
         Parser parser = new AutoDetectParser();
-        ContentHandler handler = new BodyContentHandler();
+        ContentHandler handler = new BodyContentHandler(Integer.MAX_VALUE);
         Metadata metadata = new Metadata();
         ParseContext parseContext = new ParseContext();
         parseContext.set(Parser.class, parser);
