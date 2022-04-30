@@ -25,12 +25,14 @@ import java.io.InputStream;
 
 public class TiKaUtils
 {
-    private static final String[] validExtensions = {"jpg","bmp","gif","png"};
+    private static final String[] validExtensions = {"jpg", "bmp", "gif", "png"};
 
     public static boolean IsImageExtension(String fileName)
     {
         for (String validExtension : validExtensions)
+        {
             if (fileName.endsWith(validExtension)) return true;
+        }
 
         return false;
     }

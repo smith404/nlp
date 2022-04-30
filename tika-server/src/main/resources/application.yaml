@@ -29,3 +29,13 @@ spring:
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: "false"
+
+nlp:
+  nlpRootLocation: /local/home/nlp-data-root/nlp
+  tokenizerModel: eng-token.bin
+  taggerModel: eng-pos-maxent.bin
+  languageModel: lang-detect.bin
+  sentModel: eng-sent.bin
+  lemmatizerModel: eng-lemmatizer.bin
+  lemmatizerDict: eng-lemmatizer.dict
+  chunkerModel: eng-chunker.bin

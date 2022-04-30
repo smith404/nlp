@@ -6,6 +6,8 @@
 package com.k2.tikaserver.service;
 
 import com.k2.tikaserver.exception.BaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -16,6 +18,8 @@ import java.util.Set;
 
 public interface UtilsService
 {
+    Logger log = LoggerFactory.getLogger(UtilsService.class);
+
     String DEFAULT_LOCALE = "en_ch";
     String NEWLINE = "\n";
     String TAB = "\t";
@@ -37,7 +41,7 @@ public interface UtilsService
     {
         Set<String> intersection = new HashSet<>();
 
-        for(String word: doc1)
+        for (String word : doc1)
         {
             if (doc2.contains((word)))
             {
@@ -92,7 +96,7 @@ public interface UtilsService
         }
         catch (NoSuchAlgorithmException ex)
         {
-            ex.printStackTrace();
+            log.warn(UtilsService.makeExceptionWarning(ex), "NLP");
         }
 
         return "hashfail";
