@@ -8,10 +8,13 @@ package com.k2.tikaserver.model;
 public class CustomPair
 {
     private String key;
+
     private String value;
 
     public CustomPair()
     {
+        key = "";
+        value = "";
     }
 
     public CustomPair(String key, String value)

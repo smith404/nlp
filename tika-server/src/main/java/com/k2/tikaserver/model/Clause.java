@@ -8,6 +8,13 @@ public class Clause
 
     private String subtype;
 
+    public Clause()
+    {
+        body = "";
+        type = "";
+        subtype = "";
+    }
+
     public String getBody()
     {
         return body;

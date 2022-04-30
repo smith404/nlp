@@ -8,6 +8,13 @@ public class Prediction
 
     private Double probability;
 
+    public Prediction()
+    {
+        model = "";
+        category = "";
+        probability = 0D;
+    }
+
     public String getModel()
     {
         return model;

@@ -11,7 +11,9 @@ import java.util.List;
 public class TextResponse
 {
     private String result;
+
     private boolean success;
+
     private List<CustomPair> properties;
 
     public TextResponse()

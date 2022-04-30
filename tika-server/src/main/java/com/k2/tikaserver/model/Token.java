@@ -9,20 +9,26 @@ import opennlp.tools.util.Span;
 
 public class Token
 {
-    private String type = "";
+    private String type;
 
-    private String lemma = "";
+    private String lemma;
 
-    private String value = "";
+    private String value;
 
-    private double probability = 0D;
+    private double probability;
 
-    private int start = -1;
+    private int start;
 
-    private int length = 0;
+    private int length;
 
     public Token()
     {
+        type = "";
+        lemma = "";
+        value = "";
+        probability = 0D;
+        start = -1;
+        length = 0;
     }
 
     public Token(Span span, String value)
