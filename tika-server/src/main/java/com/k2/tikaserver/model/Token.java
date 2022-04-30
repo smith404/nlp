@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2021. K2-Software
- * All software, both binary and source published by K2-Software (hereafter, Software) is copyrighted by the author (hereafter, K2-Software) and ownership of all right, title and interest in and to the Software remains with K2-Software. By using or copying the Software, User agrees to abide by the terms of this Agreement.
+ * Copyright (c) 2021-2022. All software, both binary and source published by K2-Software (hereafter, Software) is copyrighted by the author (hereafter, K2-Software) and ownership of all right, title and interest in and to the Software remains with K2-Software. By using or copying the Software, User agrees to abide by the terms of this Agreement.
  */
 
 package com.k2.tikaserver.model;
@@ -21,14 +20,26 @@ public class Token
 
     private int length;
 
+    private int end;
+
     public Token()
     {
         type = "";
         lemma = "";
         value = "";
         probability = 0D;
-        start = -1;
+        start = 0;
         length = 0;
+    }
+
+    public Token(Token that)
+    {
+        this.type = that.type;
+        this.lemma = that.lemma;
+        this.value = that.value;
+        this.probability = that.probability;
+        this.start = that.start;
+        this.length = that.length;
     }
 
     public Token(Span span, String value)
@@ -133,6 +144,11 @@ public class Token
     public boolean better(Token that)
     {
         return (this.probability >= that.probability);
+    }
+
+    public int getEnd()
+    {
+        return this.start + this.length;
     }
 
     @Override

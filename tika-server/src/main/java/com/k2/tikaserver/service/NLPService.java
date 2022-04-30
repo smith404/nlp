@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. All software, both binary and source published by K2-Software (hereafter, Software) is copyrighted by the author (hereafter, K2-Software) and ownership of all right, title and interest in and to the Software remains with K2-Software. By using or copying the Software, User agrees to abide by the terms of this Agreement.
+ */
+
 package com.k2.tikaserver.service;
 
 import com.k2.tikaserver.model.Clause;
@@ -25,7 +29,7 @@ public interface NLPService
 
     String[] chunks(String[] tokens, String[] tags);
 
-    List<Clause> splitClauses(String text);
+    List<Token> splitClauses(String text);
 
     Prediction detectLanguage(String text);
 
