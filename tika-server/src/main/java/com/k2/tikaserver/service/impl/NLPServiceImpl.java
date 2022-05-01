@@ -203,54 +203,6 @@ public class NLPServiceImpl implements NLPService
     }
 
     @Override
-    public List<String> stopWords()
-    {
-        return stopWords;
-    }
-
-    @Override
-    public String[] sentences(String text)
-    {
-        return sentenceDetector.sentDetect(text);
-    }
-
-    @Override
-    public Span[] sentencesPos(String text)
-    {
-        return sentenceDetector.sentPosDetect(text);
-    }
-
-    @Override
-    public String[] tokenize(String text)
-    {
-        return tokenizer.tokenize(text);
-    }
-
-    @Override
-    public Span[] tokenizePos(String text)
-    {
-        return tokenizer.tokenizePos(text);
-    }
-
-    @Override
-    public String[] tags(String[] tokens)
-    {
-        return tagger.tag(tokens);
-    }
-
-    @Override
-    public String[] lemmas(String[] tokens, String[] tags)
-    {
-        return lemmatizer.lemmatize(tokens, tags);
-    }
-
-    @Override
-    public String[] chunks(String[] tokens, String[] tags)
-    {
-        return chunker.chunk(tokens, tags);
-    }
-
-    @Override
     public Prediction detectLanguage(String text)
     {
         Prediction pr = new Prediction();
@@ -272,6 +224,101 @@ public class NLPServiceImpl implements NLPService
         }
 
         return pr;
+    }
+
+    @Override
+    public List<String> stopWords()
+    {
+        return stopWords;
+    }
+
+    @Override
+    public String[] sentences(String text)
+    {
+        return sentenceDetector.sentDetect(text);
+    }
+
+    @Override
+    public Span[] sentencesPos(String text)
+    {
+        return sentenceDetector.sentPosDetect(text);
+    }
+
+    @Override
+    public Token[] sentencesValues(String text)
+    {
+        Span[] spans = sentenceDetector.sentPosDetect(text);
+        String[] values = sentenceDetector.sentDetect(text);
+
+        if (spans.length != values.length)
+        {
+            log.warn("Error creating token array");
+            return new Token[0];
+        }
+
+        Token[] tokens = new Token[spans.length];
+        for (int i = 0; i < spans.length; ++i)
+        {
+            Token t = new Token(spans[i], values[i], "SENT");
+            tokens[i] = t;
+        }
+
+        return tokens;
+    }
+
+    @Override
+    public String[] tokenize(String text)
+    {
+        return tokenizer.tokenize(text);
+    }
+
+    @Override
+    public Span[] tokenizePos(String text)
+    {
+        return tokenizer.tokenizePos(text);
+    }
+
+    @Override
+    public Token[] tokenizeValues(String text)
+    {
+        Span[] spans = tokenizer.tokenizePos(text);
+        String[] values = tokenizer.tokenize(text);
+        String[] tags = tagger.tag(values);
+        String[] lemmas = lemmas(values, tags);
+
+        if (spans.length != values.length)
+        {
+            log.warn("Error creating token array");
+            return new Token[0];
+        }
+
+        Token[] tokens = new Token[spans.length];
+        for (int i = 0; i < spans.length; ++i)
+        {
+            String lemma = lemmas[i].equalsIgnoreCase("O") ? values[i].toLowerCase(Locale.ROOT) : lemmas[i];
+            Token t = new Token(spans[i], values[i], lemma.toLowerCase(Locale.ROOT), tags[i]);
+            tokens[i] = t;
+        }
+
+        return tokens;
+    }
+
+    @Override
+    public String[] tags(String[] tokens)
+    {
+        return tagger.tag(tokens);
+    }
+
+    @Override
+    public String[] lemmas(String[] tokens, String[] tags)
+    {
+        return lemmatizer.lemmatize(tokens, tags);
+    }
+
+    @Override
+    public String[] chunks(String[] tokens, String[] tags)
+    {
+        return chunker.chunk(tokens, tags);
     }
 
     @Override
@@ -309,53 +356,6 @@ public class NLPServiceImpl implements NLPService
         lastSentence.setType("PARA");
 
         return clauses;
-    }
-
-    @Override
-    public Token[] sentencesValues(String text)
-    {
-        Span[] spans = sentenceDetector.sentPosDetect(text);
-        String[] values = sentenceDetector.sentDetect(text);
-
-        if (spans.length != values.length)
-        {
-            log.warn("Error creating token array");
-            return new Token[0];
-        }
-
-        Token[] tokens = new Token[spans.length];
-        for (int i = 0; i < spans.length; ++i)
-        {
-            Token t = new Token(spans[i], values[i], "SENT");
-            tokens[i] = t;
-        }
-
-        return tokens;
-    }
-
-    @Override
-    public Token[] tokenizeValues(String text)
-    {
-        Span[] spans = tokenizer.tokenizePos(text);
-        String[] values = tokenizer.tokenize(text);
-        String[] tags = tagger.tag(values);
-        String[] lemmas = lemmas(values, tags);
-
-        if (spans.length != values.length)
-        {
-            log.warn("Error creating token array");
-            return new Token[0];
-        }
-
-        Token[] tokens = new Token[spans.length];
-        for (int i = 0; i < spans.length; ++i)
-        {
-            String lemma = lemmas[i].equalsIgnoreCase("O") ? values[i].toLowerCase(Locale.ROOT) : lemmas[i];
-            Token t = new Token(spans[i], values[i], lemma.toLowerCase(Locale.ROOT), tags[i]);
-            tokens[i] = t;
-        }
-
-        return tokens;
     }
 
     @Override

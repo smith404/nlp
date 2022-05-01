@@ -4,7 +4,6 @@
 
 package com.k2.tikaserver.service;
 
-import com.k2.tikaserver.model.Clause;
 import com.k2.tikaserver.model.Prediction;
 import com.k2.tikaserver.model.Token;
 import opennlp.tools.util.Span;
@@ -13,15 +12,21 @@ import java.util.List;
 
 public interface NLPService
 {
+    Prediction detectLanguage(String text);
+
     List<String> stopWords();
 
     String[] sentences(String text);
 
     Span[] sentencesPos(String text);
 
+    Token[] sentencesValues(String text);
+
     String[] tokenize(String text);
 
     Span[] tokenizePos(String text);
+
+    Token[] tokenizeValues(String text);
 
     String[] tags(String[] tokens);
 
@@ -30,12 +35,6 @@ public interface NLPService
     String[] chunks(String[] tokens, String[] tags);
 
     List<Token> splitClauses(String text);
-
-    Prediction detectLanguage(String text);
-
-    Token[] sentencesValues(String text);
-
-    Token[] tokenizeValues(String text);
 
     List<Token> sanitize(String text);
 

@@ -6,8 +6,14 @@ package com.k2.tikaserver.model;
 
 import opennlp.tools.util.Span;
 
+import java.util.UUID;
+
 public class Token
 {
+    private static long idCounter = 0;
+
+    private long id;
+
     private String type;
 
     private String lemma;
@@ -24,6 +30,7 @@ public class Token
 
     public Token()
     {
+        id = ++idCounter;
         type = "";
         lemma = "";
         value = "";
@@ -34,6 +41,7 @@ public class Token
 
     public Token(Token that)
     {
+        id = ++idCounter;
         this.type = that.type;
         this.lemma = that.lemma;
         this.value = that.value;
@@ -44,9 +52,10 @@ public class Token
 
     public Token(Span span, String value)
     {
-        this.value = value;
-        this.lemma = value;
+        id = ++idCounter;
         this.type = (span.getType() == null) ? "UNKNOWN" : span.getType();
+        this.lemma = "";
+        this.value = value;
         this.start = span.getStart();
         this.length = span.length();
         this.probability = span.getProb();
@@ -54,9 +63,10 @@ public class Token
 
     public Token(Span span, String value, String type)
     {
-        this.value = value;
-        this.lemma = value;
+        id = ++idCounter;
         this.type = (span.getType() == null) ? type : span.getType();
+        this.lemma = "";
+        this.value = value;
         this.start = span.getStart();
         this.length = span.length();
         this.probability = span.getProb();
@@ -64,9 +74,10 @@ public class Token
 
     public Token(Span span, String value, String lemma, String type)
     {
-        this.value = value;
-        this.lemma = lemma;
+        id = ++idCounter;
         this.type = (span.getType() == null) ? type : span.getType();
+        this.lemma = lemma;
+        this.value = value;
         this.start = span.getStart();
         this.length = span.length();
         this.probability = span.getProb();
@@ -74,11 +85,18 @@ public class Token
 
     public Token(String type, String value, double probability, int start, int length)
     {
+        id = ++idCounter;
         this.type = type;
+        this.lemma = "";
         this.value = value;
         this.probability = probability;
         this.start = start;
         this.length = length;
+    }
+
+    public long getId()
+    {
+        return id;
     }
 
     public String getType()
