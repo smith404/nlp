@@ -6,236 +6,331 @@
   -->
 
 <!DOCTYPE HTML>
+
 <head lang="en">
     <meta charset="UTF-8">
     <title>Text Tagger</title>
 
     <link rel="shortcut icon" type="image/ico" href="/resources/favicon.ico">
 
-    <link rel="stylesheet" href="/resources/css/site.css"/>
+    <link rel="stylesheet" href="/resources/css/site.css" />
 
-    <link rel="stylesheet" href="/resources/dist/bootstrap-4.3.1/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/resources/dist/fontawesome-6.1.1/css/all.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/resources/dist/bootstrap-4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/dist/fontawesome-6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/dist/datatables/datatables.min.css"/>
 
-    <script src="/resources/dist/jquery-3.6.0/jquery.min.js"></script>
-    <script src="/resources/dist/bootstrap-4.3.1/js/bootstrap.min.js"></script>
-    <script src="/resources/dist/angularjs-1.8.2/angular.min.js"></script>
-
+    <script type="text/javascript" src="/resources/dist/jquery-3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="/resources/dist/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/resources/dist/angularjs-1.8.2/angular.min.js"></script>
+    <script type="text/javascript" src="/resources/dist/datatables/datatables.min.js"></script>
+    
     <script src="/resources/js/site.js"></script>
 </head>
+
 <body ng-app="categoryConfigApp">
 
-<script type="text/javascript">
-    var app = angular.module("categoryConfigApp", []);
+    <script type="text/javascript">
+        var app = angular.module("categoryConfigApp", []);
 
-    app.controller("categoryConfigCtrl", function($scope, $http)
-    {
-        $scope.theText = '';
-        $scope.theProperties = [];
-        $scope.theSentences = [];
-        $scope.theResult = '';
-        $scope.class = 'general';
-        $scope.tag = 'TBD';
+        app.controller("categoryConfigCtrl", function ($scope, $http) {
+            $scope.theText = '';
+            $scope.theProperties = [];
+            $scope.theSentences = [];
+            $scope.theResult = '';
+            $scope.class = 'general';
+            $scope.tag = 'TBD';
 
-        $scope.readClauses = function(event)
-        {
-            var target_url = "api/v1.0/paragraphs?limit=20";
-            var method = "POST";
-            $http({
-                method: method,
-                url: target_url,
-                data: $scope.theText,
-                headers: {
-                    'Content-Type': undefined
-                }
-            }).then(function successCallback(response)
-                {
+            $scope.readClauses = function (event) {
+                var target_url = "api/v1.0/paragraphs?limit=20";
+                var method = "POST";
+                $http({
+                    method: method,
+                    url: target_url,
+                    data: $scope.theText,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                }).then(function successCallback(response) {
                     // We were able to up load the file
                     $scope.theSentences = response.data;
-                }, function errorCallback(response)
-                {
+                }, function errorCallback(response) {
                     showFailure(response);
                 });
-        }
-
-        $scope.tagNER = function(event)
-        {
-            var txtArea = document.getElementById("the-text");
-
-            var start = txtArea.selectionStart;
-            var finish = txtArea.selectionEnd;
-
-            // If nothing selected just return
-            if (start == finish) return;
-
-            var rawSel = txtArea.value.substring(start, finish);
-            var sel = rawSel.trim();
-            if (sel.length != rawSel.length)
-            {
-                var startPos = rawSel.search(sel);
-                if (startPos == 0)
-                {
-                    finish = finish - (rawSel.length - sel.length);
-                }
-                if (startPos > 0)
-                {
-                    start = start + startPos;
-                    finish = start + sel.length;
-                }
             }
 
-            var before = txtArea.value.substring(0, start);
-            var after = txtArea.value.substring(finish);
-            sel = '<START:' + $scope.tag + '>' + sel + '<END>';
+            $scope.tagNER = function (event) {
+                var txtArea = document.getElementById("the-text");
 
-            $scope.theText = before + sel + after;
-       }
+                var start = txtArea.selectionStart;
+                var finish = txtArea.selectionEnd;
 
-        $scope.uploadData = function ()
-        {
-            if( document.getElementById("singleFileUploadInput").files.length == 0 )
-            {
-                return;
+                // If nothing selected just return
+                if (start == finish) return;
+
+                var rawSel = txtArea.value.substring(start, finish);
+                var sel = rawSel.trim();
+                if (sel.length != rawSel.length) {
+                    var startPos = rawSel.search(sel);
+                    if (startPos == 0) {
+                        finish = finish - (rawSel.length - sel.length);
+                    }
+                    if (startPos > 0) {
+                        start = start + startPos;
+                        finish = start + sel.length;
+                    }
+                }
+
+                var before = txtArea.value.substring(0, start);
+                var after = txtArea.value.substring(finish);
+                sel = '<START:' + $scope.tag + '>' + sel + '<END>';
+
+                $scope.theText = before + sel + after;
             }
 
-            var theFile = document.getElementById("singleFileUploadInput").files[0];
-            var file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
-
-            if (theFile != null) $scope.uploadFileToUrl(theFile, file_url);
-
-        };
-
-        $scope.uploadFileToUrl = function(file, target_url)
-        {
-            var form_data = new FormData();
-            form_data.append("file", file);
-
-            var method = "POST";
-            $http({
-                method: method,
-                url: target_url,
-                data: form_data,
-                headers: {
-                    'Content-Type': undefined
+            $scope.uploadData = function () {
+                if (document.getElementById("singleFileUploadInput").files.length == 0) {
+                    return;
                 }
-            }).then(function successCallback(response)
-                {
-                    // We were able to up load the file
+
+                var theFile = document.getElementById("singleFileUploadInput").files[0];
+                var file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
+
+                if (theFile != null) $scope.uploadFileToUrl(theFile, file_url);
+
+            };
+
+            $scope.uploadFileToUrl = function (file, target_url) {
+                var form_data = new FormData();
+                form_data.append("file", file);
+
+                var method = "POST";
+                $http({
+                    method: method,
+                    url: target_url,
+                    data: form_data,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                }).then(function successCallback(response) {
                     $scope.theText = response.data.result;
-                }, function errorCallback(response)
-                {
+                    $scope.setProperties(response.data.properties)
+                }, function errorCallback(response) {
                     showFailure(response);
                 });
-        }
-    });
-</script>
+            }
 
-<main class="container-fluid iris-main" ng-controller="categoryConfigCtrl" role="main">
+            $scope.setProperties = function(properties)
+            {
+                $('#theproperties')
+                    .DataTable({
+                        "data": properties,
+                        "columns": [{
+                            "data": "key"
+                        }, {
+                            "data": "value"
+                        }]
+                    })
+            };
 
-    <div class="row mb-3">
-        <div class="col">
-            <h4>Text Tagger</h4>
-        </div>
-    </div>
+        });
+    </script>
 
-    <div class="row mb-3">
-        <div class="col-4">
-            <div class="row mb-3">
-                <div class="col-8">
-                    <div class="input-group">
-                        <input class="btn btn-primary" id="singleFileUploadInput" name="thefile" type="file"/>
+    <main class="container-fluid iris-main" ng-controller="categoryConfigCtrl" role="main">
+
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs nav-fill" id="iris-list" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#text" role="tab">Text Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#properties" role="tab">Document Properties</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#domains" role="tab">Domains</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#lookups" role="tab">Look Up Items</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#serverlog" role="tab">Log</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Admin Home Page</h4>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="text" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-users-cog"></i> Document
+                            </div>
+                            <div class="card-body" onsubmit="return false">
+                                <div class="row mb-3">
+                                    <div class="col-10 d-flex flex-column">
+                                        <label for="sqlin">
+                                            <i class="fas fa-code"></i>
+                                            OCR Text
+                                        </label>
+                                        <textarea class="form-control iris-code flex-grow-1" id="sqlin" ng-model="theText"
+                                            placeholder="Document Text" rows="15"></textarea>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="row mb-1" style="padding-right: 15px;">
+                                            <label for="source">
+                                                <i class="fas fa-database"></i>
+                                                Data Source
+                                            </label>
+                                            <div class="input-group">
+                                                <select id="source" class="form-control" ng-model="source"
+                                                    ng-options="source for source in sources">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-1" style="margin-left: 10px;">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" id="isselect" type="checkbox"
+                                                    value="">Is a
+                                                select
+                                                query
+                                            </label>
+                                        </div>
+                                        <div class="row mb-1" style="margin-left: 10px;">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" id="isvertical" type="checkbox"
+                                                    value="">Vertical
+                                                Output
+                                            </label>
+                                        </div>
+                                        <div class="row mb-1" style="margin-left: 10px;">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" id="isscript" type="checkbox"
+                                                    value="">Is a
+                                                script
+                                            </label>
+                                        </div>
+                                        <div class="row mb-1" style="padding-right: 15px;">
+                                            <button class="btn btn-primary btn-block" id="executebutton"
+                                                ng-click="executeSQL()" type="submit">
+                                                Execute
+                                            </button>
+                                        </div>
+                                        <div class="row mb-1" style="padding-right: 15px;">
+                                            <button class="btn btn-primary btn-block" id="clearButton"
+                                                ng-click="clearResults()" type="submit">
+                                                Clear Results
+                                            </button>
+                                        </div>
+                                        <div class="row mb-1" style="padding-right: 15px;">
+                                            <button class="btn btn-primary btn-block" id="clearAllButton"
+                                                ng-click="clearAll()" type="submit">
+                                                Clear All
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <input class="btn btn-primary" id="singleFileUploadInput" name="thefile"
+                                            type="file" />
+                                            <button class="btn btn-primary" id="uploadButton" ng-click="uploadData()">
+                                                Bulk Upload
+                                            </button>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div aria-labelledby="transitions-tab" class="tab-pane" id="properties" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-users"></i> Document Properties
+                            </div>
+                            <div class="card-body">
+                                <table class="display compact" id="theproperties" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Property Name</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div aria-labelledby="domains-tab" class="tab-pane" id="domains" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chess"></i> Domains
+                            </div>
+                            <div class="card-body">
+                                <table class="display compact" id="thedomains" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Read Permission</th>
+                                            <th>Execute Permission</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-primary" href="/admin/domaindetail?id=0">
+                                    Add Domain
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div aria-labelledby="lookups-tab" class="tab-pane" id="lookups" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chess"></i> Look Up Values
+                            </div>
+                            <div class="card-body">
+                                <table class="display compact" id="thelookups" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                            <th>Short Name</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-primary" href="/admin/lookuptypedetail?id=0">
+                                    Add Lookup Type
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div aria-labelledby="deals-tab" class="tab-pane" id="serverlog" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-clipboard-list"></i> Log messages
+                            </div>
+                            <div class="card-body">
+                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="col">
-                    <div class="input-group">
-                        <button class="btn btn-primary" id="uploadButton" ng-click="uploadData()">
-                            Upload
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-8">
-                    <input class="form-control" id="tagger-text" ng-model="tag" type="text">
-                </div>
-                <div class="col">
-                    <button class="btn btn-primary" id="tagger-button" ng-click="tagNER($event)">
-                        Tag text
-                    </button>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-8">
-                    <input class="form-control" id="class" ng-model="class" type="text">
-                </div>
-                <div class="col">
-                    <button class="btn btn-primary" id="set-class" ng-click="readClauses($event)">
-                        Clauses
-                    </button>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col">
-                    <label for="the-stats">
-                        <h6>
-                            <i class="fas fa-glasses"></i> Document Properties
-                        </h6>
-                    </label>
-                    <div style="overflow:auto;">
-                        <table id="the-stats" class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Property</th>
-                                    <th scope="col">Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="prop in theProperties">
-                                    <td ng-bind="prop.key"></td>
-                                    <td ng-bind="prop.value"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
-
-        <div class="col-8">
-            <label for="the-text">
-                <h5>
-                    <i class="fas fa-align-justify"></i> Text
-                </h5>
-            </label>
-            <textarea id="the-text" ng-model="theText" type="text"
-                      class="form-control" rows="20">
-        </textarea>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col">
-            <div style="overflow:auto;">
-                <table id="the-paragraphs" class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">id</th>
-                            <th scope="col" style="width:90%">Text</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="satz in theSentences">
-                            <td ng-bind="satz.id"></td>
-                            <td ng-bind="satz.text"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-</div>
-    </div>
-
-</main>
+    </main>
+    <script type="text/javascript" src="/resources/js/tabs.js"></script>
 </body>
+
 </html>
