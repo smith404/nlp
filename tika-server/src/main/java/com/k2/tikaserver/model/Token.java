@@ -12,7 +12,7 @@ public class Token
 {
     private static long idCounter = 0;
 
-    private long id;
+    private UUID id = UUID.randomUUID();
 
     private String type;
 
@@ -30,7 +30,6 @@ public class Token
 
     public Token()
     {
-        id = ++idCounter;
         type = "";
         lemma = "";
         value = "";
@@ -41,7 +40,6 @@ public class Token
 
     public Token(Token that)
     {
-        id = ++idCounter;
         this.type = that.type;
         this.lemma = that.lemma;
         this.value = that.value;
@@ -52,7 +50,6 @@ public class Token
 
     public Token(Span span, String value)
     {
-        id = ++idCounter;
         this.type = (span.getType() == null) ? "UNKNOWN" : span.getType();
         this.lemma = "";
         this.value = value;
@@ -63,7 +60,6 @@ public class Token
 
     public Token(Span span, String value, String type)
     {
-        id = ++idCounter;
         this.type = (span.getType() == null) ? type : span.getType();
         this.lemma = "";
         this.value = value;
@@ -74,7 +70,6 @@ public class Token
 
     public Token(Span span, String value, String lemma, String type)
     {
-        id = ++idCounter;
         this.type = (span.getType() == null) ? type : span.getType();
         this.lemma = lemma;
         this.value = value;
@@ -85,7 +80,6 @@ public class Token
 
     public Token(String type, String value, double probability, int start, int length)
     {
-        id = ++idCounter;
         this.type = type;
         this.lemma = "";
         this.value = value;
@@ -94,7 +88,7 @@ public class Token
         this.length = length;
     }
 
-    public long getId()
+    public UUID getId()
     {
         return id;
     }

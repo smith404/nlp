@@ -1,4 +1,4 @@
-$('#iris-list a').on('click', function (e)
+$('#iris-tab-list a').on('click', function (e)
 {
   e.preventDefault()
   $(this).tab('show')
