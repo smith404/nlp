@@ -30,12 +30,14 @@
 <body ng-app="categoryConfigApp">
 
     <script type="text/javascript">
-        var app = angular.module("categoryConfigApp", []);
+        const app = angular.module("categoryConfigApp", []);
 
         app.controller("categoryConfigCtrl", function ($scope, $http) {
             $scope.theText = '';
             $scope.theProperties = [];
             $scope.theClauses = [];
+            $scope.theComparisonClauses = [];
+            $scope.theComparison = [];
 
             function uuidv4()
             {
@@ -52,7 +54,7 @@
 
             $scope.addClause = function (id) {
                 let i = 0
-                let newClause = { "id": uuidv4(),
+                const newClause = { "id": uuidv4(),
                                   "value": "" }
                 for(i = 0; i < $scope.theClauses.length; ++i){ 
                     if ($scope.theClauses[i].id == id)
@@ -93,14 +95,83 @@
                 console.log("Clicked: " + id)
             }
 
-            $scope.dumpClauses = function () {
-                var paragraphs = []
+            $scope.uploadComparisonData = function () {
+                if (document.getElementById("comparisonFileUploadInput").files.length == 0) {
+                    return;
+                }
+                let theFile = document.getElementById("comparisonFileUploadInput").files[0];
+                let file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
+                if (theFile != null) $scope.uploadComparisonFileToUrl(theFile, file_url);
+
+                //$scope.theComparisonClauses = $scope.theClauses
+            }
+
+            $scope.uploadComparisonFileToUrl = function (file, target_url) {
+                let form_data = new FormData();
+                form_data.append("file", file);
+
+                let method = "POST";
+                $http({
+                    method: method,
+                    url: target_url,
+                    data: form_data,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                }).then(function successCallback(response) {
+                    $scope.readComparisonClauses(response.data.result);
+                }, function errorCallback(response) {
+                    showFailure(response);
+                });
+            }
+
+            $scope.readComparisonClauses = function (theText) {
+                let target_url = "{{ tika_server }}" + "/nlp/clauses";
+                let method = "POST";
+                $http({
+                    method: method,
+                    url: target_url,
+                    data: theText,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                }).then(function successCallback(response) {
+                    $scope.theComparisonClauses = response.data;
+                    $scope.doCompare()
+                }, function errorCallback(response) {
+                    showFailure(response);
+                });
+            }
+
+            $scope.doCompare = function () {
+                let target_url = "/api/v1.0/comparelist";
+                let method = "POST";
+                let body = {}
+                body['primary'] = $scope.theClauses
+                body['secondary'] = $scope.theComparisonClauses
+                $http({
+                    method: method,
+                    url: target_url,
+                    data: body,
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                }).then(function successCallback(response) {
+                   console.log(response.data);
+                }, function errorCallback(response) {
+                    showFailure(response);
+                });
+            }
+
+
+            $scope.dumpClausesToDocument = function () {
+                let paragraphs = []
                 for (clause of $scope.theClauses)
                 {
                     paragraphs.push(clause.value)
                 }
 
-                var element = document.createElement('a');
+                let element = document.createElement('a');
                 element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(paragraphs.join("\n\n")));
                 element.setAttribute('download', 'document.txt');
 
@@ -113,8 +184,8 @@
             }
 
             $scope.readClauses = function () {
-                var target_url = "http://localhost:8085/nlp/clauses";
-                var method = "POST";
+                let target_url = "{{ tika_server }}" + "/nlp/clauses";
+                let method = "POST";
                 $http({
                     method: method,
                     url: target_url,
@@ -129,23 +200,20 @@
                 });
             }
 
-            $scope.uploadData = function () {
+            $scope.uploadOCRData = function () {
                 if (document.getElementById("singleFileUploadInput").files.length == 0) {
                     return;
                 }
-
-                var theFile = document.getElementById("singleFileUploadInput").files[0];
-                //var file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
-                var file_url = "http://localhost:8085/tika/gettext?type=content";
-
+                let theFile = document.getElementById("singleFileUploadInput").files[0];
+                let file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
                 if (theFile != null) $scope.uploadFileToUrl(theFile, file_url);
             };
 
             $scope.uploadFileToUrl = function (file, target_url) {
-                var form_data = new FormData();
+                let form_data = new FormData();
                 form_data.append("file", file);
 
-                var method = "POST";
+                let method = "POST";
                 $http({
                     method: method,
                     url: target_url,
@@ -271,7 +339,7 @@
                                     <div class="col">
                                         <input class="btn btn-primary" id="singleFileUploadInput" name="thefile"
                                             type="file" />
-                                        <button class="btn btn-primary" id="uploadButton" ng-click="uploadData()">
+                                        <button class="btn btn-primary" id="uploadButton" ng-click="uploadOCRData()">
                                             Upload Document
                                         </button>
                                     </div>
@@ -325,7 +393,7 @@
                                 <button class="btn btn-primary" ng-click="readClauses()">
                                     Get Clauses
                                 </button>
-                                <button class="btn btn-primary" ng-click="dumpClauses()">
+                                <button class="btn btn-primary" ng-click="dumpClausesToDocument()">
                                     Download Document
                                 </button>
                             </div>
@@ -348,7 +416,7 @@
                                     </div>
                                 </div>
                                     <div class="col-6">
-                                        <div ng-repeat="clause in theClauses" class="row">
+                                        <div ng-repeat="clause in theComparisonClauses" class="row">
                                         <div class="col">
                                             <textarea ng-attr-id="{{to_clause_id}}" class="form-control iris-code flex-grow-1 iris-amber-boarder"
                                             ng-model="clause.value" rows="3"></textarea>
@@ -356,6 +424,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="card-footer">
+                                <input class="btn btn-primary" id="comparisonFileUploadInput" name="thefile" type="file" />
+                                <button class="btn btn-primary" id="comparisonUploadButton" ng-click="uploadComparisonData()">
+                                    Upload Document
+                                </button>
+                            </div>                           
                         </div>
                     </div>
 

@@ -138,14 +138,16 @@ def compare_texts():
 @app.route('/api/v1.0/comparelist', methods=['POST'])
 def compare_lists():
     body = request.json
-    list1 = body['first']
-    list2 = body['second']
+    list1 = body['primary']
+    list2 = body['secondary']
     result = []
-    for text1 in list1:
+    for clause1 in list1:
         result_list = []
-        for text2 in list2:
+        for clause2 in list2:
             comparison = {}
-            comparison['result'] = LanguageProcessor.compare(text1, text2)
+            comparison['primary'] = clause1['id']
+            comparison['secondary'] = clause2['id']
+            comparison['result'] = LanguageProcessor.compare(clause1['value'], clause2['value'])
             result_list.append(comparison)
         result.append(result_list) 
     return Response(json.dumps(result),  mimetype='application/json')
