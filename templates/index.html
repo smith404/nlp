@@ -35,8 +35,8 @@
         app.controller("categoryConfigCtrl", function ($scope, $http) {
             $scope.theText = '';
             $scope.theProperties = [];
-            $scope.theClauses = [];
             $scope.theComparisonClauses = [];
+            $scope.theTemplateClauses = [];
             $scope.theComparison = [];
             $scope.redValue = 0.7;
             $scope.amberValue = 0.8;
@@ -63,7 +63,7 @@
             }
 
             $scope.deleteClause = function (id) {
-                $scope.theClauses = $scope.theClauses.filter(function (value, index, arr) {
+                $scope.theComparisonClauses = $scope.theComparisonClauses.filter(function (value, index, arr) {
                     return value.id != id;
                 })
             }
@@ -74,35 +74,35 @@
                     "id": uuidv4(),
                     "value": ""
                 }
-                for (i = 0; i < $scope.theClauses.length; ++i) {
-                    if ($scope.theClauses[i].id == id) {
+                for (i = 0; i < $scope.theComparisonClauses.length; ++i) {
+                    if ($scope.theComparisonClauses[i].id == id) {
                         break
                     }
                 }
-                $scope.theClauses.splice(i, 0, newClause);
+                $scope.theComparisonClauses.splice(i, 0, newClause);
             }
 
             $scope.combineWithClauseAbove = function (id) {
                 let i = 0
-                for (i = 0; i < $scope.theClauses.length; ++i) {
-                    if ($scope.theClauses[i].id == id) {
+                for (i = 0; i < $scope.theComparisonClauses.length; ++i) {
+                    if ($scope.theComparisonClauses[i].id == id) {
                         break
                     }
                 }
                 if (i == 0) return
-                $scope.theClauses[i - 1].value = $scope.theClauses[i - 1].value + " " + $scope.theClauses[i].value
+                $scope.theComparisonClauses[i - 1].value = $scope.theComparisonClauses[i - 1].value + " " + $scope.theComparisonClauses[i].value
                 $scope.deleteClause(id)
             }
 
             $scope.combineWithClauseBelow = function (id) {
                 let i = 0
-                for (i = 0; i < $scope.theClauses.length; ++i) {
-                    if ($scope.theClauses[i].id == id) {
+                for (i = 0; i < $scope.theComparisonClauses.length; ++i) {
+                    if ($scope.theComparisonClauses[i].id == id) {
                         break
                     }
                 }
-                if (i > $scope.theClauses.length - 1) return
-                $scope.theClauses[i + 1].value = $scope.theClauses[i + 1].value + " " + $scope.theClauses[i].value
+                if (i > $scope.theComparisonClauses.length - 1) return
+                $scope.theComparisonClauses[i + 1].value = $scope.theComparisonClauses[i + 1].value + " " + $scope.theComparisonClauses[i].value
                 $scope.deleteClause(id)
             }
 
@@ -171,7 +171,7 @@
                         'Content-Type': undefined
                     }
                 }).then(function successCallback(response) {
-                    $scope.theComparisonClauses = response.data;
+                    $scope.theTemplateClauses = response.data;
                     $scope.doCompare()
                 }, function errorCallback(response) {
                     showFailure(response);
@@ -182,7 +182,7 @@
                 const target_url = "/api/v1.0/comparelist";
                 const method = "POST";
                 let body = {}
-                body['primary'] = $scope.theClauses
+                body['primary'] = $scope.theTemplateClauses
                 body['secondary'] = $scope.theComparisonClauses
                 $http({
                     method: method,
@@ -201,7 +201,7 @@
 
             $scope.dumpClausesToDocument = function () {
                 let paragraphs = []
-                for (clause of $scope.theClauses) {
+                for (clause of $scope.theComparisonClauses) {
                     paragraphs.push(clause.value)
                 }
 
@@ -228,7 +228,7 @@
                         'Content-Type': undefined
                     }
                 }).then(function successCallback(response) {
-                    $scope.theClauses = response.data;
+                    $scope.theComparisonClauses = response.data;
                 }, function errorCallback(response) {
                     showFailure(response);
                 });
@@ -315,55 +315,34 @@
                                             ng-model="theText" placeholder="Document Text" rows="20"></textarea>
                                     </div>
                                     <div class="col-2">
-                                        <div class="row mb-1" style="padding-right: 15px;">
-                                            <label for="source">
-                                                <i class="fas fa-database"></i>
-                                                Data Source
+                                        <div class="row mb-1"">
+                                            <label for="sqlin">
+                                            <i class="fas fa-cogs"></i>
+                                            Options
                                             </label>
-                                            <div class="input-group">
-                                                <select id="source" class="form-control" ng-model="source"
-                                                    ng-options="source for source in sources">
-                                                </select>
-                                            </div>
                                         </div>
                                         <div class="row mb-1" style="margin-left: 10px;">
                                             <label class="form-check-label">
                                                 <input class="form-check-input" id="isselect" type="checkbox"
-                                                    value="">Is a
-                                                select
-                                                query
+                                                    value="">Make Alpha-Numeric
                                             </label>
                                         </div>
                                         <div class="row mb-1" style="margin-left: 10px;">
                                             <label class="form-check-label">
                                                 <input class="form-check-input" id="isvertical" type="checkbox"
-                                                    value="">Vertical
-                                                Output
+                                                    value="">Remove excess whitespace
                                             </label>
                                         </div>
                                         <div class="row mb-1" style="margin-left: 10px;">
                                             <label class="form-check-label">
                                                 <input class="form-check-input" id="isscript" type="checkbox"
-                                                    value="">Is a
-                                                script
+                                                    value="">Remove Stopwords
                                             </label>
                                         </div>
                                         <div class="row mb-1" style="padding-right: 15px;">
                                             <button class="btn btn-primary btn-block" id="executebutton"
                                                 ng-click="executeSQL()" type="submit">
-                                                Execute
-                                            </button>
-                                        </div>
-                                        <div class="row mb-1" style="padding-right: 15px;">
-                                            <button class="btn btn-primary btn-block" id="clearButton"
-                                                ng-click="clearResults()" type="submit">
-                                                Clear Results
-                                            </button>
-                                        </div>
-                                        <div class="row mb-1" style="padding-right: 15px;">
-                                            <button class="btn btn-primary btn-block" id="clearAllButton"
-                                                ng-click="clearAll()" type="submit">
-                                                Clear All
+                                                Re-run
                                             </button>
                                         </div>
                                     </div>
@@ -408,7 +387,7 @@
                                 <i class="fas fa-chess"></i> Document Clauses
                             </div>
                             <div class="card-body">
-                                <div ng-repeat="clause in theClauses" class="row">
+                                <div ng-repeat="clause in theComparisonClauses" class="row">
                                     <div class="col-10">
                                         <textarea class="form-control iris-code flex-grow-1" ng-model="clause.value"
                                             rows="3"></textarea>
@@ -434,9 +413,6 @@
                                 <button class="btn btn-primary" ng-click="dumpClausesToDocument()">
                                     Download Document
                                 </button>
-                                <button class="btn btn-primary" ng-click="showDialog()">
-                                    Dialog
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -449,7 +425,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-6">
-                                        <div ng-repeat="clause in theClauses" class="row">
+                                        <div ng-repeat="clause in theTemplateClauses" class="row">
                                             <div class="col">
                                                 <textarea ng-attr-id="{{from_clause_id}}"
                                                     class="form-control iris-code flex-grow-1"
@@ -477,7 +453,7 @@
                                         type="file" />
                                     <button class="btn btn-primary" id="comparisonUploadButton"
                                         ng-click="uploadComparisonData()">
-                                        Upload Document
+                                        Upload Template
                                     </button>
                                 </div>
                             </div>
