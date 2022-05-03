@@ -1,6 +1,4 @@
 #!flask/bin/python
-import os
-import tempfile
 import json
 
 from langdetect import detect
@@ -142,14 +140,12 @@ def compare_lists():
     list2 = body['secondary']
     result = []
     for clause1 in list1:
-        result_list = []
         for clause2 in list2:
             comparison = {}
             comparison['primary'] = clause1['id']
             comparison['secondary'] = clause2['id']
             comparison['result'] = LanguageProcessor.compare(clause1['value'], clause2['value'])
-            result_list.append(comparison)
-        result.append(result_list) 
+            result.append(comparison) 
     return Response(json.dumps(result),  mimetype='application/json')
 
 

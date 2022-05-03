@@ -41,19 +41,19 @@
 }
 
 .iris-code {
-    font-family: monospace;
-    margin-bottom: 10px;
+    font-family: monospace; 
+    margin-bottom: 5px;
 }
 
-.iris-red-boarder {
+.iris-red-border {
     border: 3px solid red !important;
 }
 
-.iris-amber-boarder {
+.iris-amber-border {
     border: 3px solid goldenrod !important;
 }
 
-.iris-amber-green {
+.iris-green-border {
     border: 3px solid green !important;
 }
 
@@ -204,25 +204,6 @@
     100% {
         transform: translate(1px, -2px) rotate(-1deg);
     }
-}
-
-input:required,
-textarea:required,
-select:required {
-    box-shadow: 2px 2px 2px rgba(200, 0, 0, 0.85);
-}
-
-input:required:focus,
-textarea:required:focus,
-select:required:focus {
-    outline: none !important;
-    border: 1px solid red;
-}
-
-input:required:hover,
-textarea:required:hover,
-select:required:hover {
-    opacity: 1;
 }
 
 .comment-text {

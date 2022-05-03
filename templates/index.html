@@ -17,7 +17,7 @@
 
     <link rel="stylesheet" type="text/css" href="/resources/dist/bootstrap-4.3.1/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/resources/dist/fontawesome-6.1.1/css/all.min.css" />
-    <link rel="stylesheet" type="text/css" href="/resources/dist/datatables/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/resources/dist/datatables/datatables.min.css" />
 
     <script type="text/javascript" src="/resources/dist/jquery-3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="/resources/dist/bootstrap-4.3.1/js/bootstrap.min.js"></script>
@@ -38,61 +38,101 @@
             $scope.theClauses = [];
             $scope.theComparisonClauses = [];
             $scope.theComparison = [];
+            $scope.redValue = 0.7;
+            $scope.amberValue = 0.8;
+            $scope.greenValue = 0.9;
 
-            function uuidv4()
-            {
-                return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            function addClass(item, clazz) {
+                let element = document.getElementById(item);
+                element.classList.add(clazz);
+            }
+
+            function removeClass(item, clazz) {
+                let element = document.getElementById(item);
+                element.classList.remove(clazz);
+            }
+
+            function uuidv4() {
+                return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
                     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
                 );
             }
 
+            $scope.showDialog = function () {
+                $("#addComment").modal('show')
+            }
+
             $scope.deleteClause = function (id) {
-                $scope.theClauses = $scope.theClauses.filter(function(value, index, arr){ 
+                $scope.theClauses = $scope.theClauses.filter(function (value, index, arr) {
                     return value.id != id;
                 })
             }
 
             $scope.addClause = function (id) {
                 let i = 0
-                const newClause = { "id": uuidv4(),
-                                  "value": "" }
-                for(i = 0; i < $scope.theClauses.length; ++i){ 
-                    if ($scope.theClauses[i].id == id)
-                    {
+                const newClause = {
+                    "id": uuidv4(),
+                    "value": ""
+                }
+                for (i = 0; i < $scope.theClauses.length; ++i) {
+                    if ($scope.theClauses[i].id == id) {
                         break
                     }
                 }
-                $scope.theClauses.splice(i, 0, newClause);   
+                $scope.theClauses.splice(i, 0, newClause);
             }
 
             $scope.combineWithClauseAbove = function (id) {
                 let i = 0
-                for(i = 0; i < $scope.theClauses.length; ++i){ 
-                    if ($scope.theClauses[i].id == id)
-                    {
+                for (i = 0; i < $scope.theClauses.length; ++i) {
+                    if ($scope.theClauses[i].id == id) {
                         break
                     }
                 }
-                if (i==0) return
-                $scope.theClauses[i-1].value = $scope.theClauses[i-1].value + " " + $scope.theClauses[i].value
-                $scope.deleteClause(id)   
+                if (i == 0) return
+                $scope.theClauses[i - 1].value = $scope.theClauses[i - 1].value + " " + $scope.theClauses[i].value
+                $scope.deleteClause(id)
             }
 
             $scope.combineWithClauseBelow = function (id) {
                 let i = 0
-                for(i = 0; i < $scope.theClauses.length; ++i){ 
-                    if ($scope.theClauses[i].id == id)
-                    {
+                for (i = 0; i < $scope.theClauses.length; ++i) {
+                    if ($scope.theClauses[i].id == id) {
                         break
                     }
                 }
-                if (i>$scope.theClauses.length-1) return
-                $scope.theClauses[i+1].value = $scope.theClauses[i+1].value + " " + $scope.theClauses[i].value
-                $scope.deleteClause(id)   
+                if (i > $scope.theClauses.length - 1) return
+                $scope.theClauses[i + 1].value = $scope.theClauses[i + 1].value + " " + $scope.theClauses[i].value
+                $scope.deleteClause(id)
             }
 
             $scope.clauseFocus = function (id) {
-                console.log("Clicked: " + id)
+                
+
+                relevantResults = $scope.theComparison.filter(function (value, index, arr) {
+                    return value['primary'] == id;
+                })
+
+                for (result of relevantResults)
+                {
+                    console.log(result['secondary'] + ': ' + result['result'])
+                    removeClass(result['secondary'], "iris-green-border")
+                    removeClass(result['secondary'], "iris-amber-border")
+                    removeClass(result['secondary'], "iris-red-border")
+
+                    if (result['result'] > $scope.greenValue)
+                    {
+                        addClass(result['secondary'], "iris-green-border")
+                    }
+                    else if (result['result'] > $scope.amberValue)
+                    {
+                        addClass(result['secondary'], "iris-amber-border")
+                    }
+                    else if (result['result'] > $scope.redValue)
+                    {
+                        addClass(result['secondary'], "iris-red-border")
+                    }
+                }
             }
 
             $scope.uploadComparisonData = function () {
@@ -100,17 +140,15 @@
                     return;
                 }
                 let theFile = document.getElementById("comparisonFileUploadInput").files[0];
-                let file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
+                const file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
                 if (theFile != null) $scope.uploadComparisonFileToUrl(theFile, file_url);
-
-                //$scope.theComparisonClauses = $scope.theClauses
             }
 
             $scope.uploadComparisonFileToUrl = function (file, target_url) {
                 let form_data = new FormData();
                 form_data.append("file", file);
 
-                let method = "POST";
+                const method = "POST";
                 $http({
                     method: method,
                     url: target_url,
@@ -126,8 +164,8 @@
             }
 
             $scope.readComparisonClauses = function (theText) {
-                let target_url = "{{ tika_server }}" + "/nlp/clauses";
-                let method = "POST";
+                const target_url = "{{ tika_server }}" + "/nlp/clauses";
+                const method = "POST";
                 $http({
                     method: method,
                     url: target_url,
@@ -144,8 +182,8 @@
             }
 
             $scope.doCompare = function () {
-                let target_url = "/api/v1.0/comparelist";
-                let method = "POST";
+                const target_url = "/api/v1.0/comparelist";
+                const method = "POST";
                 let body = {}
                 body['primary'] = $scope.theClauses
                 body['secondary'] = $scope.theComparisonClauses
@@ -157,7 +195,7 @@
                         'Content-Type': "application/json"
                     }
                 }).then(function successCallback(response) {
-                   console.log(response.data);
+                    $scope.theComparison = response.data
                 }, function errorCallback(response) {
                     showFailure(response);
                 });
@@ -166,8 +204,7 @@
 
             $scope.dumpClausesToDocument = function () {
                 let paragraphs = []
-                for (clause of $scope.theClauses)
-                {
+                for (clause of $scope.theClauses) {
                     paragraphs.push(clause.value)
                 }
 
@@ -184,8 +221,8 @@
             }
 
             $scope.readClauses = function () {
-                let target_url = "{{ tika_server }}" + "/nlp/clauses";
-                let method = "POST";
+                const target_url = "{{ tika_server }}" + "/nlp/clauses";
+                const method = "POST";
                 $http({
                     method: method,
                     url: target_url,
@@ -205,7 +242,7 @@
                     return;
                 }
                 let theFile = document.getElementById("singleFileUploadInput").files[0];
-                let file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
+                const file_url = "{{ tika_server }}" + "/tika/gettext?type=content";
                 if (theFile != null) $scope.uploadFileToUrl(theFile, file_url);
             };
 
@@ -213,7 +250,7 @@
                 let form_data = new FormData();
                 form_data.append("file", file);
 
-                let method = "POST";
+                const method = "POST";
                 $http({
                     method: method,
                     url: target_url,
@@ -229,15 +266,14 @@
                 });
             }
 
-            $scope.setProperties = function(properties)
-            {
+            $scope.setProperties = function (properties) {
                 $('#theproperties').DataTable().destroy();
                 $('#theproperties')
                     .DataTable({
                         "data": properties,
                         "columns": [
                             { "data": "key" },
-                            { "data": "value" } ]
+                            { "data": "value" }]
                     })
             };
         });
@@ -278,8 +314,8 @@
                                             <i class="fas fa-code"></i>
                                             OCR Text
                                         </label>
-                                        <textarea class="form-control iris-code flex-grow-1" id="sqlin" ng-model="theText"
-                                            placeholder="Document Text" rows="20"></textarea>
+                                        <textarea class="form-control iris-code flex-grow-1" id="sqlin"
+                                            ng-model="theText" placeholder="Document Text" rows="20"></textarea>
                                     </div>
                                     <div class="col-2">
                                         <div class="row mb-1" style="padding-right: 15px;">
@@ -356,7 +392,8 @@
                                 <i class="fas fa-users"></i> Document Properties
                             </div>
                             <div class="card-body">
-                                <table class="display compact" id="theproperties" style="width:100%; table-layout: fixed; word-wrap:break-word;">
+                                <table class="display compact" id="theproperties"
+                                    style="width:100%; table-layout: fixed; word-wrap:break-word;">
                                     <thead>
                                         <tr>
                                             <th>Property Name</th>
@@ -376,15 +413,19 @@
                             <div class="card-body">
                                 <div ng-repeat="clause in theClauses" class="row">
                                     <div class="col-10">
-                                        <textarea class="form-control iris-code flex-grow-1"
-                                        ng-model="clause.value" rows="3"></textarea>
+                                        <textarea class="form-control iris-code flex-grow-1" ng-model="clause.value"
+                                            rows="3"></textarea>
                                     </div>
                                     <div class="col-2">
-                                        <div class="btn-group" >
-                                            <button class="btn btn-iris" ng-click="deleteClause(clause.id)"><i class="fa fa-trash"></i></button>
-                                            <button class="btn btn-iris" ng-click="addClause(clause.id)"><i class="fa fa-plus"></i></button>
-                                            <button class="btn btn-iris" ng-click="combineWithClauseAbove(clause.id)"><i class="fa fa-arrow-circle-up"></i></button>
-                                            <button class="btn btn-iris" ng-click="combineWithClauseBelow(clause.id)"><i class="fa fa-arrow-circle-down"></i></button>
+                                        <div class="btn-group">
+                                            <button class="btn btn-iris" ng-click="deleteClause(clause.id)"><i
+                                                    class="fa fa-trash"></i></button>
+                                            <button class="btn btn-iris" ng-click="addClause(clause.id)"><i
+                                                    class="fa fa-plus"></i></button>
+                                            <button class="btn btn-iris" ng-click="combineWithClauseAbove(clause.id)"><i
+                                                    class="fa fa-arrow-circle-up"></i></button>
+                                            <button class="btn btn-iris" ng-click="combineWithClauseBelow(clause.id)"><i
+                                                    class="fa fa-arrow-circle-down"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -395,6 +436,9 @@
                                 </button>
                                 <button class="btn btn-primary" ng-click="dumpClausesToDocument()">
                                     Download Document
+                                </button>
+                                <button class="btn btn-primary" ng-click="showDialog()">
+                                    Dialog
                                 </button>
                             </div>
                         </div>
@@ -409,34 +453,46 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div ng-repeat="clause in theClauses" class="row">
-                                        <div class="col">
-                                            <textarea ng-attr-id="{{from_clause_id}}" class="form-control iris-code flex-grow-1"
-                                            ng-focus="clauseFocus(clause.id)" ng-model="clause.value" rows="3"></textarea>
+                                            <div class="col">
+                                                <textarea ng-attr-id="{{from_clause_id}}"
+                                                    class="form-control iris-code flex-grow-1"
+                                                    ng-focus="clauseFocus(clause.id)" ng-model="clause.value" rows="3"
+                                                    readonly></textarea>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                     <div class="col-6">
                                         <div ng-repeat="clause in theComparisonClauses" class="row">
-                                        <div class="col">
-                                            <textarea ng-attr-id="{{to_clause_id}}" class="form-control iris-code flex-grow-1 iris-amber-boarder"
-                                            ng-model="clause.value" rows="3"></textarea>
+                                            <div class="col-10">
+                                                <textarea ng-attr-id="{{to_clause_id}}"
+                                                    class="form-control iris-code flex-grow-1" ng-model="clause.value"
+                                                    rows="3" readonly></textarea>
+                                            </div>
+                                            <div class="col-2">
+                                                <input type="text" class="form-control"
+                                                    style="margin-bottom: 10px; margin-top: 2px;" readonly>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-footer">
+                                    <input class="btn btn-primary" id="comparisonFileUploadInput" name="thefile"
+                                        type="file" />
+                                    <button class="btn btn-primary" id="comparisonUploadButton"
+                                        ng-click="uploadComparisonData()">
+                                        Upload Document
+                                    </button>
+                                </div>
                             </div>
-                            <div class="card-footer">
-                                <input class="btn btn-primary" id="comparisonFileUploadInput" name="thefile" type="file" />
-                                <button class="btn btn-primary" id="comparisonUploadButton" ng-click="uploadComparisonData()">
-                                    Upload Document
-                                </button>
-                            </div>                           
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
-        </div>
     </main>
+
+    {% include "dialog.html" %}
+
     <script type="text/javascript" src="/resources/js/tabs.js"></script>
 </body>
 

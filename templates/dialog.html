@@ -1,0 +1,37 @@
+<script script th:inline="javascript">
+    app.controller("addCommentCtrl", function($rootScope, $scope, $http) {
+        $scope.comment = "";
+        $scope.addComment = function()
+        {
+            $rootScope.$broadcast('newComment', $scope.comment);
+            $('#addComment').modal('hide');
+        }
+    });
+</script>
+<div class="modal fade" id="addComment" ng-controller="addCommentCtrl" style="z-index: 1600;">
+    <div class="modal-dialog" role="document">
+        <script>
+            $('#addComment').on('hidden.bs.modal', function() {
+                $(this).find("input,textarea,select").val('').end()
+            })
+        </script>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Please add a short comment</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <label for="thecomment">Comment:</label>
+                    <textarea class="form-control" id="thecomment" maxlength="100" ng-model="comment"
+                              placeholder="Your comment"
+                              required rows="3"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button aria-label="Left Align" class="btn btn-primary" ng-click='addComment()' type="button">
+                    <i class="fa fa-hand-point-right"></i> Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
