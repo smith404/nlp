@@ -107,15 +107,12 @@
             }
 
             $scope.clauseFocus = function (id) {
-                
-
                 relevantResults = $scope.theComparison.filter(function (value, index, arr) {
                     return value['primary'] == id;
                 })
 
                 for (result of relevantResults)
                 {
-                    console.log(result['secondary'] + ': ' + result['result'])
                     removeClass(result['secondary'], "iris-green-border")
                     removeClass(result['secondary'], "iris-amber-border")
                     removeClass(result['secondary'], "iris-red-border")
