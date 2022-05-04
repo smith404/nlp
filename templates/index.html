@@ -22,6 +22,7 @@
     <script type="text/javascript" src="/resources/dist/jquery-3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="/resources/dist/bootstrap-4.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/resources/dist/angularjs-1.8.2/angular.min.js"></script>
+    <script type="text/javascript" src="/resources/dist/angularjs-1.8.2/angular-sanitize.min.js"></script>
     <script type="text/javascript" src="/resources/dist/datatables/datatables.min.js"></script>
     <script type="text/javascript" src="/resources/dist/chart-js-3.7.1/chart.min.js"></script>
 
@@ -31,17 +32,30 @@
 <body ng-app="categoryConfigApp">
 
     <script type="text/javascript">
-        const app = angular.module("categoryConfigApp", []);
+        const app = angular.module("categoryConfigApp", ['ngSanitize']);
 
         app.controller("categoryConfigCtrl", function ($scope, $http) {
+            $scope.lang = '<B>Language: </B><I>UNKNOWN</I>';
+            $scope.theInitialText = '';
             $scope.theText = '';
             $scope.theProperties = [];
             $scope.theComparisonClauses = [];
             $scope.theTemplateClauses = [];
             $scope.theComparison = [];
-            $scope.redValue = 0.7;
-            $scope.amberValue = 0.8;
-            $scope.greenValue = 0.9;
+
+            $scope.redValue = 70;
+            $scope.amberValue = 80;
+            $scope.greenValue = 90;
+
+            $scope.options = {
+                makeAlpha : false,
+                removeSpace : false,
+                removeStop : false,
+                toLemma : false,
+                removeDuplicates : false,
+                expand : false,
+                toLower : false
+            }
 
             function addClass(item, clazz) {
                 let text_element = document.getElementById(item);
@@ -66,14 +80,81 @@
                 }
             }
 
+            $scope.executeCleanUp = function() {
+                if ($scope.options.makeAlpha) $scope.makeAlphaNumeric()
+                if ($scope.options.removeSpace) $scope.removeWhite()
+                if ($scope.options.toLower) $scope.toLower()
+            }
+
+            $scope.removeWhite = function () {
+                $scope.theText = $scope.theText.replace(/  +/g, ' ')
+            }
+
+            $scope.makeAlphaNumeric = function () {
+                $scope.theText = $scope.theText.replace(/[^\n0-9a-zA-Z?!. ,;:-]/g, '')
+            }
+
+            $scope.toLower = function () {
+                $scope.theText = $scope.theText.toLowerCase()
+            }
+
+            $scope.matchChart = null
+            $scope.getBestMatch = function (relevantResults) {
+                // Delete any existing chart
+                if ($scope.matchChart != null) $scope.matchChart.destroy()
+                theData = []
+                theLabels = []
+                for (result of relevantResults)
+                {
+                    theData.push(result['result'] * 100)
+                    theLabels.push(result['secondary'])
+                }
+                const ctx = document.getElementById('best-match').getContext('2d');
+                $scope.matchChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: theLabels,
+                        datasets: [{
+                            label: '% Match',
+                            data: theData,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
             function uuidv4() {
                 return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
                     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
                 );
             }
 
-            $scope.showDialog = function () {
-                $("#addComment").modal('show')
+            $scope.revert = function() {
+                $scope.theText = $scope.theInitialText
+            }
+
+            $scope.detectLanguage = function() {
+                const target_url = "/api/v1.0/data/language";
+                const method = "POST";
+                $http({
+                    method: method,
+                    url: target_url,
+                    data: $scope.theText,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                }).then(function successCallback(response) {
+                    $scope.lang = '<B>Language: </B><I>' + response.data.longname + '</I>';
+                }, function errorCallback(response) {
+                    showFailure(response);
+                });
             }
 
             $scope.deleteClause = function (id) {
@@ -124,23 +205,24 @@
                 relevantResults = $scope.theComparison.filter(function (value, index, arr) {
                     return value['primary'] == id;
                 })
-
+               
                 setProbabilities(relevantResults)
+                $scope.getBestMatch(relevantResults)
                 for (result of relevantResults)
                 {
                     removeClass(result['secondary'], "iris-green-border")
                     removeClass(result['secondary'], "iris-amber-border")
                     removeClass(result['secondary'], "iris-red-border")
 
-                    if (result['result'] > $scope.greenValue)
+                    if (result['result'] * 100 > $scope.greenValue)
                     {
                         addClass(result['secondary'], "iris-green-border")
                     }
-                    else if (result['result'] > $scope.amberValue)
+                    else if (result['result'] * 100 > $scope.amberValue)
                     {
                         addClass(result['secondary'], "iris-amber-border")
                     }
-                    else if (result['result'] > $scope.redValue)
+                    else if (result['result'] * 100 > $scope.redValue)
                     {
                         addClass(result['secondary'], "iris-red-border")
                     }
@@ -271,7 +353,9 @@
                         'Content-Type': undefined
                     }
                 }).then(function successCallback(response) {
+                    $scope.theInitialText = response.data.result;
                     $scope.theText = response.data.result;
+                    $scope.detectLanguage()
                     $scope.setProperties(response.data.properties)
                 }, function errorCallback(response) {
                     showFailure(response);
@@ -288,6 +372,7 @@
                             { "data": "value" }]
                     })
             };
+
         });
     </script>
 
@@ -320,14 +405,12 @@
                     <div class="tab-pane active" id="text" role="tabpanel">
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-users-cog"></i> Document
+                                <i class="fas fa-align-left"></i> Document
                             </div>
                             <div class="card-body">
                                 <div class="row mb-3">
                                     <div class="col-10 d-flex flex-column">
-                                        <label for="sqlin">
-                                            <i class="fas fa-code"></i>
-                                            OCR Text
+                                        <label for="sqlin" ng-bind-html="lang">
                                         </label>
                                         <textarea class="form-control iris-code flex-grow-1" id="sqlin"
                                             ng-model="theText" placeholder="Document Text" rows="20"></textarea>
@@ -341,26 +424,62 @@
                                         </div>
                                         <div class="row mb-1" style="margin-left: 10px;">
                                             <label class="form-check-label">
-                                                <input class="form-check-input" id="isselect" type="checkbox"
-                                                    value="">Make Alpha-Numeric
+                                                <input class="form-check-input" id="is-select" type="checkbox"
+                                                    ng-model="options.makeAlpha" value="">Make Alpha-Numeric
                                             </label>
                                         </div>
                                         <div class="row mb-1" style="margin-left: 10px;">
                                             <label class="form-check-label">
-                                                <input class="form-check-input" id="isvertical" type="checkbox"
-                                                    value="">Remove excess whitespace
+                                                <input class="form-check-input" id="is-vertical" type="checkbox"
+                                                    ng-model="options.removeSpace" value="">Remove excess whitespace
                                             </label>
                                         </div>
                                         <div class="row mb-1" style="margin-left: 10px;">
                                             <label class="form-check-label">
-                                                <input class="form-check-input" id="isscript" type="checkbox"
-                                                    value="">Remove Stopwords
+                                                <input class="form-check-input" id="is-script" type="checkbox"
+                                                    ng-model="options.removeStop" value="">Remove Stopwords
+                                            </label>
+                                        </div>
+                                        <div class="row mb-1" style="margin-left: 10px;">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" id="is-lemma" type="checkbox"
+                                                    ng-model="options.toLemma" value="">Lemmatize 
+                                            </label>
+                                        </div>
+                                        <div class="row mb-1" style="margin-left: 10px;">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" id="is-duplicate" type="checkbox"
+                                                    ng-model="options.removeDuplicates" value="">Remove Duplicates
+                                            </label>
+                                        </div>
+                                        <div class="row mb-1" style="margin-left: 10px;">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" id="is-expand" type="checkbox"
+                                                    ng-model="options.expand" value="">Expand Contractions
+                                            </label>
+                                        </div>
+                                        <div class="row mb-1" style="margin-left: 10px;">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" id="is-lower" type="checkbox"
+                                                    ng-model="options.toLower" value="">Lower Case
                                             </label>
                                         </div>
                                         <div class="row mb-1" style="padding-right: 15px;">
-                                            <button class="btn btn-primary btn-block" id="executebutton"
-                                                ng-click="executeSQL()" type="submit">
-                                                Re-run
+                                            <button class="btn btn-primary btn-block" id="clean-button"
+                                                ng-click="executeCleanUp()" type="submit">
+                                                Clean Text
+                                            </button>
+                                        </div>
+                                        <div class="row mb-1" style="padding-right: 15px;">
+                                            <button class="btn btn-primary btn-block" id="revert-button"
+                                                ng-click="revert()" type="submit">
+                                                Revert Text
+                                            </button>
+                                        </div>
+                                        <div class="row mb-1" style="padding-right: 15px;">
+                                            <button class="btn btn-primary btn-block" id="detect-button"
+                                                ng-click="detectLanguage()" type="submit">
+                                                Detect Language
                                             </button>
                                         </div>
                                     </div>
@@ -438,7 +557,45 @@
                     <div aria-labelledby="transitions-tab" class="tab-pane" id="compare" role="tabpanel">
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-users"></i> Document Compare
+                                    <i class="fas fa-users"></i> Document Compare
+                                <div class="row mt-3">
+                                    <div class="col-4">
+                                        <label for="red-slider" >Red Threshold
+                                        </label>
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <input  id="red-slider" ng-model="redValue" class="form-control" type="range" min="1" max="100">
+                                            </div>
+                                            <div class="col-3">
+                                                <input  id="red-val" ng-model="redValue" class="form-control" type="text" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="amber-slider" >Amber Threshold
+                                        </label>
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <input  id="amber-slider" ng-model="amberValue" class="form-control" type="range" min="1" max="100">
+                                            </div>
+                                            <div class="col-3">
+                                                <input  id="amber-val" ng-model="amberValue" class="form-control" type="text" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="green-slider" >Green Threshold
+                                        </label>
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <input  id="green-slider" ng-model="greenValue" class="form-control" type="range" min="1" max="100">
+                                            </div>
+                                            <div class="col-3">
+                                                <input  id="green-val" ng-model="greenValue" class="form-control" type="text" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -486,25 +643,11 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-4">
-                                        <canvas id="myChart" width="200" height="200"></canvas>
+                                    <div class="col-6">
+                                        <canvas id="best-match" width="200" height="200"></canvas>
                                     </div>
-                                    <div class="col-4">
-                                        <canvas id="1myChart" width="200" height="200"></canvas>
-                                    </div>
-                                    <div class="col-4">
-                                        <canvas id="2myChart" width="200" height="200"></canvas>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <canvas id="amyChart" width="200" height="200"></canvas>
-                                    </div>
-                                    <div class="col-4">
-                                        <canvas id="a1myChart" width="200" height="200"></canvas>
-                                    </div>
-                                    <div class="col-4">
-                                        <canvas id="a2myChart" width="200" height="200"></canvas>
+                                    <div class="col-6">
+                                        <canvas id="overall-match" width="200" height="200"></canvas>
                                     </div>
                                 </div>
                                 <div class="card-footer">
@@ -517,46 +660,7 @@
         </div>
     </main>
 
-    {% include "dialog.html" %}
-
     <script type="text/javascript" src="/resources/js/tabs.js"></script>
-    <script>
-        const ctx = document.getElementById('myChart').getContext('2d');
-        const myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-        </script>
 </body>
 
 </html>
