@@ -23,6 +23,7 @@
     <script type="text/javascript" src="/resources/dist/bootstrap-4.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/resources/dist/angularjs-1.8.2/angular.min.js"></script>
     <script type="text/javascript" src="/resources/dist/datatables/datatables.min.js"></script>
+    <script type="text/javascript" src="/resources/dist/chart-js-3.7.1/chart.min.js"></script>
 
     <script src="/resources/js/site.js"></script>
 </head>
@@ -43,13 +44,26 @@
             $scope.greenValue = 0.9;
 
             function addClass(item, clazz) {
-                let element = document.getElementById(item);
-                element.classList.add(clazz);
+                let text_element = document.getElementById(item);
+                let prob_element = document.getElementById('P-' + item);
+                text_element.classList.add(clazz);
+                prob_element.classList.add(clazz);
             }
 
             function removeClass(item, clazz) {
-                let element = document.getElementById(item);
-                element.classList.remove(clazz);
+                let text_element = document.getElementById(item);
+                let prob_element = document.getElementById('P-' + item);
+                text_element.classList.remove(clazz);
+                prob_element.classList.remove(clazz);
+            }
+
+            function setProbabilities(probabilities) {
+                for (item of probabilities)
+                {
+                    let prob_element = document.getElementById('P-' + item['secondary']);
+                    prob = Math.round(item['result'] * 1000) / 1000
+                    prob_element.value = prob
+                }
             }
 
             function uuidv4() {
@@ -111,6 +125,7 @@
                     return value['primary'] == id;
                 })
 
+                setProbabilities(relevantResults)
                 for (result of relevantResults)
                 {
                     removeClass(result['secondary'], "iris-green-border")
@@ -293,11 +308,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#compare" role="tab">Document Comparison</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#charts" role="tab">Comparison Overview</a>
+                    </li>
                 </ul>
             </div>
 
             <div class="card-body">
-                <h4 class="card-title">Admin Home Page</h4>
+                <h4 class="card-title">Document Comparison Demo</h4>
                 <div class="tab-content">
                     <div class="tab-pane active" id="text" role="tabpanel">
                         <div class="card">
@@ -442,9 +460,11 @@
                                                     rows="3" readonly></textarea>
                                             </div>
                                             <div class="col-2">
-                                                <input type="text" class="form-control"
+                                                {% autoescape false %}
+                                                <input ng-attr-id="{{to_prob_id}}" type="text" class="form-control"
                                                     style="margin-bottom: 10px; margin-top: 2px;" readonly>
-                                            </div>
+                                                {% endautoescape %}                                                
+                                                </div>
                                         </div>
                                     </div>
                                 </div>
@@ -458,15 +478,85 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
+                    <div aria-labelledby="transitions-tab" class="tab-pane" id="charts" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-users"></i> Comparison Overview
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <canvas id="myChart" width="200" height="200"></canvas>
+                                    </div>
+                                    <div class="col-4">
+                                        <canvas id="1myChart" width="200" height="200"></canvas>
+                                    </div>
+                                    <div class="col-4">
+                                        <canvas id="2myChart" width="200" height="200"></canvas>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <canvas id="amyChart" width="200" height="200"></canvas>
+                                    </div>
+                                    <div class="col-4">
+                                        <canvas id="a1myChart" width="200" height="200"></canvas>
+                                    </div>
+                                    <div class="col-4">
+                                        <canvas id="a2myChart" width="200" height="200"></canvas>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
     </main>
 
     {% include "dialog.html" %}
 
     <script type="text/javascript" src="/resources/js/tabs.js"></script>
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        </script>
 </body>
 
 </html>
