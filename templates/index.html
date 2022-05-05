@@ -33,6 +33,15 @@
 
 <script type="text/javascript">
     const app = angular.module("categoryConfigApp", ['ngSanitize']);
+
+    app.config(function($locationProvider,$interpolateProvider){
+        $locationProvider.html5Mode({
+                enabled:true
+        });
+        $interpolateProvider.startSymbol('[[');
+        $interpolateProvider.endSymbol(']]');
+    });  
+
     const tika_base = "{{ tika_server }}";
 </script>
 

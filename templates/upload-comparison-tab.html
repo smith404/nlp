@@ -44,10 +44,12 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-6">
-                    <div class="row">
+                    <div ng-repeat="clause in theTemplateClauses" class="row">
                         <div class="col">
-                            <textarea id="user-clause" class="form-control iris-code flex-grow-1"
-                            ng-model="comparisonClause" rows="6"></textarea>
+                            <textarea ng-attr-id="[[clause.id]]"
+                                class="form-control iris-code flex-grow-1"
+                                ng-focus="clauseFocus(clause.id)" ng-model="clause.value" rows="3"
+                                readonly></textarea>
                         </div>
                     </div>
                 </div>
@@ -56,7 +58,7 @@
                         <div class="col-10">
                             <textarea ng-attr-id="[[clause.id]]"
                                 class="form-control iris-code flex-grow-1" ng-model="clause.value"
-                                readonly></textarea>
+                                rows="3" readonly></textarea>
                         </div>
                         <div class="col-2">
                             {% autoescape false %}
@@ -68,9 +70,11 @@
                 </div>
             </div>
             <div class="card-footer">
+                <input class="btn btn-primary" id="comparisonFileUploadInput" name="thefile"
+                    type="file" />
                 <button class="btn btn-primary" id="comparisonButton"
-                    ng-click="compareParagraph()">
-                    Compare
+                    ng-click="uploadComparisonData()">
+                    Upload Template
                 </button>
             </div>
         </div>

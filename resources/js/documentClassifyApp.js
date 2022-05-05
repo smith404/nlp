@@ -24,6 +24,7 @@ function setProbabilities(probabilities) {
 app.controller("documentClassifyCtrl", function ($scope, $http) {
     $scope.lang = '<B>Language: </B><I>UNKNOWN</I>';
     $scope.theInitialText = '';
+    $scope.comparisonClause = '';
     $scope.theText = '';
     $scope.theProperties = [];
     $scope.theComparisonClauses = [];
@@ -43,6 +44,16 @@ app.controller("documentClassifyCtrl", function ($scope, $http) {
         removeDuplicates : false,
         expand : false,
         toLower : false
+    }
+
+    $scope.compareParagraph = function() {
+        $scope.theTemplateClauses = []
+        let clause = {}
+        clause['id'] = 'user-clause'
+        clause['value'] = $scope.comparisonClause
+        $scope.theTemplateClauses.push(clause);
+        $scope.doCompare()
+        $scope.clauseFocus('user-clause')
     }
 
     $scope.executeCleanUp = function() {

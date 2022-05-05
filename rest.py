@@ -45,10 +45,7 @@ def send_resources(path):
 # The home page route
 @app.route("/")
 def hello_world(name=None):
-    return render_template('index.html', tika_server=TIKA_SERVER + ':' + TIKA_PORT,
-                                        from_clause_id="{{clause.id}}",
-                                        to_clause_id="{{clause.id}}",
-                                        to_prob_id="{{'P-' + clause.id}}")
+    return render_template('index.html', tika_server=TIKA_SERVER + ':' + TIKA_PORT)
 
 
 @app.route('/api/v1.0/data/sanitize', methods=['POST'])
