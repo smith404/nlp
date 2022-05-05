@@ -13,8 +13,7 @@ function removeClass(item, clazz) {
 }
 
 function setProbabilities(probabilities) {
-    for (item of probabilities)
-    {
+    for (item of probabilities) {
         let prob_element = document.getElementById('P-' + item['secondary']);
         prob = Math.round(item['result'] * 1000) / 1000
         prob_element.value = prob
@@ -31,32 +30,32 @@ app.controller("documentClassifyCtrl", function ($scope, $http) {
     $scope.theTemplateClauses = [];
     $scope.theComparison = [];
     $scope.matchChart = null
+    $scope.guageChart = null
 
     $scope.redValue = 70;
     $scope.amberValue = 80;
     $scope.greenValue = 90;
 
     $scope.options = {
-        makeAlpha : false,
-        removeSpace : false,
-        removeStop : false,
-        toLemma : false,
-        removeDuplicates : false,
-        expand : false,
-        toLower : false
+        makeAlpha: false,
+        removeSpace: false,
+        removeStop: false,
+        toLemma: false,
+        removeDuplicates: false,
+        expand: false,
+        toLower: false
     }
 
-    $scope.compareParagraph = function() {
+    $scope.compareParagraph = function () {
         $scope.theTemplateClauses = []
         let clause = {}
         clause['id'] = 'user-clause'
         clause['value'] = $scope.comparisonClause
         $scope.theTemplateClauses.push(clause);
-        $scope.doCompare()
-        $scope.clauseFocus('user-clause')
+        $scope.doCompare('user-clause')
     }
 
-    $scope.executeCleanUp = function() {
+    $scope.executeCleanUp = function () {
         if ($scope.options.makeAlpha) $scope.makeAlphaNumeric()
         if ($scope.options.removeSpace) $scope.removeWhite()
         if ($scope.options.toLower) $scope.toLower()
@@ -77,39 +76,114 @@ app.controller("documentClassifyCtrl", function ($scope, $http) {
     $scope.getBestMatch = function (relevantResults) {
         // Delete any existing chart
         if ($scope.matchChart != null) $scope.matchChart.destroy()
-        theData = []
-        theLabels = []
-        for (result of relevantResults)
-        {
-            theData.push(result['result'] * 100)
-            theLabels.push(result['secondary'])
+        if ($scope.guageChart != null) $scope.guageChart.destroy()
+
+        let theBestProbability = 0
+        let theGuageData = []
+        let theData = []
+        let theLabels = []
+        let theColors = []
+
+        let index = 0
+        for (result of relevantResults) {
+            let actualValue = Math.round((result['result'] * 100))
+            // Find the best match
+            if (actualValue > theBestProbability) theBestProbability = actualValue
+            theData.push((actualValue - 50) * 2)
+            theLabels.push('Clause: ' + (++index))
+            theColors.push(toColor(actualValue))
         }
-        const ctx = document.getElementById('best-match').getContext('2d');
-        $scope.matchChart = new Chart(ctx, {
+        theGuageData.push(theBestProbability-1)
+        theGuageData.push(1)
+        theGuageData.push(100-theBestProbability-1)
+
+        const bestMatchChart = {
             type: 'bar',
             data: {
                 labels: theLabels,
                 datasets: [{
                     label: '% Match',
                     data: theData,
-                    borderWidth: 1
+                    borderWidth: 1,
+                    backgroundColor: theColors
                 }]
             },
             options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                        title: {
+                        display: true,
+                        text: 'Overall Match Statistics',
+                        font: {
+                            size: 18
+                        }
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        max: 100,
+                        min: -100,
+                        ticks: {
+                            stepSize: 10
+                        }
                     }
                 }
             }
-        });
+        }
+        const ctx = document.getElementById('best-match-chart').getContext('2d');
+        $scope.matchChart = new Chart(ctx, bestMatchChart);
+
+        let guageChart = {
+            type: 'doughnut',
+            data: {
+                labels: ["", "Probability", ""],
+                datasets: [{
+                    label: 'probability',
+                    data: theGuageData,
+                    backgroundColor: ["blue", "red", "lightgrey"]
+                }]
+            },
+            options: {
+                rotation: 270,
+                circumference: 180,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                        title: {
+                        display: true,
+                        text: 'Estimated Match Likelihood',
+                        font: {
+                            size: 18
+                        }
+                    },
+                    subtitle: {
+                        display: true,
+                        text: theBestProbability + '%',
+                        font: {
+                            size: 36
+                        },
+                        position: "bottom",
+                        padding: {
+                            bottom: 150
+                        }
+                    }
+        
+                }       
+            }
+        }
+
+        const ctx2 = document.getElementById('guage-chart').getContext('2d');
+        $scope.guageChart = new Chart(ctx2, guageChart);
     }
 
-    $scope.revert = function() {
+    $scope.revert = function () {
         $scope.theText = $scope.theInitialText
     }
 
-    $scope.detectLanguage = function() {
+    $scope.detectLanguage = function () {
         const target_url = "/api/v1.0/data/language";
         const method = "POST";
         $http({
@@ -174,25 +248,21 @@ app.controller("documentClassifyCtrl", function ($scope, $http) {
         relevantResults = $scope.theComparison.filter(function (value, index, arr) {
             return value['primary'] == id;
         })
-       
+
         setProbabilities(relevantResults)
         $scope.getBestMatch(relevantResults)
-        for (result of relevantResults)
-        {
+        for (result of relevantResults) {
             removeClass(result['secondary'], "iris-green-border")
             removeClass(result['secondary'], "iris-amber-border")
             removeClass(result['secondary'], "iris-red-border")
 
-            if (result['result'] * 100 > $scope.greenValue)
-            {
+            if (result['result'] * 100 > $scope.greenValue) {
                 addClass(result['secondary'], "iris-green-border")
             }
-            else if (result['result'] * 100 > $scope.amberValue)
-            {
+            else if (result['result'] * 100 > $scope.amberValue) {
                 addClass(result['secondary'], "iris-amber-border")
             }
-            else if (result['result'] * 100 > $scope.redValue)
-            {
+            else if (result['result'] * 100 > $scope.redValue) {
                 addClass(result['secondary'], "iris-red-border")
             }
         }
@@ -238,13 +308,13 @@ app.controller("documentClassifyCtrl", function ($scope, $http) {
             }
         }).then(function successCallback(response) {
             $scope.theTemplateClauses = response.data;
-            $scope.doCompare()
+            $scope.doCompare(null)
         }, function errorCallback(response) {
             showFailure(response);
         });
     }
 
-    $scope.doCompare = function () {
+    $scope.doCompare = function (element) {
         const target_url = "/api/v1.0/comparelist";
         const method = "POST";
         let body = {}
@@ -259,6 +329,7 @@ app.controller("documentClassifyCtrl", function ($scope, $http) {
             }
         }).then(function successCallback(response) {
             $scope.theComparison = response.data
+            if (element != null) $scope.clauseFocus(element)
         }, function errorCallback(response) {
             showFailure(response);
         });

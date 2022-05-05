@@ -125,7 +125,7 @@ dialog.on("click", ".boot4cancel", function (e) {
   processCallback(e, dialog, callbacks.onEscape, false);
 });
 
-var waitingDialog = waitingDialog || (function ($) {
+const waitingDialog = (function ($) {
   'use strict';
   let $dialog = $(
     '<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
@@ -223,38 +223,6 @@ function fakeDownload(filename, text) {
   document.body.removeChild(element);
 }
 
-function makeButtonList(entities, container, callback) {
-  // List container
-  let listContainer = document.getElementById(container);
-  let entity;
-  for (entity of entities) {
-    let b = document.createElement('button');
-    b.className = 'list-group-item list-group-item-action';
-    b.type = 'button';
-    b.innerHTML = entity.name;
-    b.setAttribute('ng-click', callback + '(' + entity.id + ')');
-
-    listContainer.appendChild(b);
-  }
-};
-
-function makeNamedEntityTable(entities, container, fields) {
-  // Table container
-  let tableContainer = document.getElementById(container);
-
-  tableCreate(entities, tableContainer, fields);
-};
-
-function searchAndReplace(target, fields, entity) {
-  let field;
-  let res = target;
-  for (field of fields) {
-    res = res.replace('@' + field.name, entity[field.name]);
-  }
-
-  return res;
-};
-
 function isEmpty(obj) {
   for (let prop in obj) {
     if (obj.hasOwnProperty(prop)) return false;
@@ -262,8 +230,8 @@ function isEmpty(obj) {
   return true;
 };
 
-function showSuccess(response) {
-  waitingDialog.show('Saved successfully...', { dialogSize: 'sm', progressType: 'striped bg-success progress-bar-animated' });
+function showSuccess(message) {
+  waitingDialog.show(message, { dialogSize: 'sm', progressType: 'striped bg-success progress-bar-animated' });
   setTimeout(function () { waitingDialog.hide(); }, 3000);
 };
 
@@ -289,4 +257,20 @@ function uuidv4() {
   );
 }
 
+function getRandomColor() {
+  var letters = '0123456789ABCDEF'.split('');
+  var color = '#';
+  for (var i = 0; i < 6; i++ ) {
+      color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
 
+function toColor(num) {
+  num >>>= 0;
+  var b = num*39 & 0xFF,
+      g = num*17 & 0xFF,
+      r = num*83 & 0xFF,
+      a = 1;
+   return "rgba(" + [r, g, b, a].join(",") + ")";
+}
