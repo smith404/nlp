@@ -1,0 +1,82 @@
+<div class="tab-pane" id="compare" role="tabpanel">
+    <div class="card">
+        <div class="card-header">
+                <i class="fas fa-users"></i> Document Compare
+            <div class="row mt-3">
+                <div class="col-4">
+                    <label for="red-slider" >Red Threshold
+                    </label>
+                    <div class="row">
+                        <div class="col-9">
+                            <input  id="red-slider" ng-model="redValue" class="form-control" type="range" min="1" max="100">
+                        </div>
+                        <div class="col-3">
+                            <input  id="red-val" ng-model="redValue" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label for="amber-slider" >Amber Threshold
+                    </label>
+                    <div class="row">
+                        <div class="col-9">
+                            <input  id="amber-slider" ng-model="amberValue" class="form-control" type="range" min="1" max="100">
+                        </div>
+                        <div class="col-3">
+                            <input  id="amber-val" ng-model="amberValue" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label for="green-slider" >Green Threshold
+                    </label>
+                    <div class="row">
+                        <div class="col-9">
+                            <input  id="green-slider" ng-model="greenValue" class="form-control" type="range" min="1" max="100">
+                        </div>
+                        <div class="col-3">
+                            <input  id="green-val" ng-model="greenValue" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div ng-repeat="clause in theTemplateClauses" class="row">
+                        <div class="col">
+                            <textarea ng-attr-id="{{from_clause_id}}"
+                                class="form-control iris-code flex-grow-1"
+                                ng-focus="clauseFocus(clause.id)" ng-model="clause.value" rows="3"
+                                readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div ng-repeat="clause in theComparisonClauses" class="row">
+                        <div class="col-10">
+                            <textarea ng-attr-id="{{to_clause_id}}"
+                                class="form-control iris-code flex-grow-1" ng-model="clause.value"
+                                rows="3" readonly></textarea>
+                        </div>
+                        <div class="col-2">
+                            {% autoescape false %}
+                            <input ng-attr-id="{{to_prob_id}}" type="text" class="form-control"
+                                style="margin-bottom: 10px; margin-top: 2px;" readonly>
+                            {% endautoescape %}                                                
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <input class="btn btn-primary" id="comparisonFileUploadInput" name="thefile"
+                    type="file" />
+                <button class="btn btn-primary" id="comparisonUploadButton"
+                    ng-click="uploadComparisonData()">
+                    Upload Template
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

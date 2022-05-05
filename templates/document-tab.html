@@ -1,0 +1,96 @@
+<div class="tab-pane active" id="text" role="tabpanel">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-align-left"></i> Document
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-10 d-flex flex-column">
+                    <label for="sqlin" ng-bind-html="lang">
+                    </label>
+                    <textarea class="form-control iris-code flex-grow-1" id="sqlin"
+                        ng-model="theText" placeholder="Document Text" rows="20"></textarea>
+                </div>
+                <div class="col-2">
+                    <div class="row mb-1"">
+                        <label for="sqlin">
+                        <i class="fas fa-cogs"></i>
+                        Options
+                        </label>
+                    </div>
+                    <div class="row mb-1" style="margin-left: 10px;">
+                        <label class="form-check-label">
+                            <input class="form-check-input" id="is-select" type="checkbox"
+                                ng-model="options.makeAlpha" value="">Make Alpha-Numeric
+                        </label>
+                    </div>
+                    <div class="row mb-1" style="margin-left: 10px;">
+                        <label class="form-check-label">
+                            <input class="form-check-input" id="is-vertical" type="checkbox"
+                                ng-model="options.removeSpace" value="">Remove excess whitespace
+                        </label>
+                    </div>
+                    <div class="row mb-1" style="margin-left: 10px;">
+                        <label class="form-check-label">
+                            <input class="form-check-input" id="is-script" type="checkbox"
+                                ng-model="options.removeStop" value="">Remove Stopwords
+                        </label>
+                    </div>
+                    <div class="row mb-1" style="margin-left: 10px;">
+                        <label class="form-check-label">
+                            <input class="form-check-input" id="is-lemma" type="checkbox"
+                                ng-model="options.toLemma" value="">Lemmatize 
+                        </label>
+                    </div>
+                    <div class="row mb-1" style="margin-left: 10px;">
+                        <label class="form-check-label">
+                            <input class="form-check-input" id="is-duplicate" type="checkbox"
+                                ng-model="options.removeDuplicates" value="">Remove Duplicates
+                        </label>
+                    </div>
+                    <div class="row mb-1" style="margin-left: 10px;">
+                        <label class="form-check-label">
+                            <input class="form-check-input" id="is-expand" type="checkbox"
+                                ng-model="options.expand" value="">Expand Contractions
+                        </label>
+                    </div>
+                    <div class="row mb-1" style="margin-left: 10px;">
+                        <label class="form-check-label">
+                            <input class="form-check-input" id="is-lower" type="checkbox"
+                                ng-model="options.toLower" value="">Lower Case
+                        </label>
+                    </div>
+                    <div class="row mb-1" style="padding-right: 15px;">
+                        <button class="btn btn-primary btn-block" id="clean-button"
+                            ng-click="executeCleanUp()" type="submit">
+                            Clean Text
+                        </button>
+                    </div>
+                    <div class="row mb-1" style="padding-right: 15px;">
+                        <button class="btn btn-primary btn-block" id="revert-button"
+                            ng-click="revert()" type="submit">
+                            Revert Text
+                        </button>
+                    </div>
+                    <div class="row mb-1" style="padding-right: 15px;">
+                        <button class="btn btn-primary btn-block" id="detect-button"
+                            ng-click="detectLanguage()" type="submit">
+                            Detect Language
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input class="btn btn-primary" id="singleFileUploadInput" name="thefile"
+                        type="file" />
+                    <button class="btn btn-primary" id="uploadButton" ng-click="uploadOCRData()">
+                        Upload Document
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+</div>

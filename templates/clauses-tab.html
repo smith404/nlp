@@ -1,0 +1,35 @@
+<div class="tab-pane" id="clauses" role="tabpanel">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-chess"></i> Document Clauses
+        </div>
+        <div class="card-body">
+            <div ng-repeat="clause in theComparisonClauses" class="row">
+                <div class="col-10">
+                    <textarea class="form-control iris-code flex-grow-1" ng-model="clause.value"
+                        rows="3"></textarea>
+                </div>
+                <div class="col-2">
+                    <div class="btn-group">
+                        <button class="btn btn-iris" ng-click="deleteClause(clause.id)"><i
+                                class="fa fa-trash"></i></button>
+                        <button class="btn btn-iris" ng-click="addClause(clause.id)"><i
+                                class="fa fa-plus"></i></button>
+                        <button class="btn btn-iris" ng-click="combineWithClauseAbove(clause.id)"><i
+                                class="fa fa-arrow-circle-up"></i></button>
+                        <button class="btn btn-iris" ng-click="combineWithClauseBelow(clause.id)"><i
+                                class="fa fa-arrow-circle-down"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-primary" ng-click="readClauses()">
+                Get Clauses
+            </button>
+            <button class="btn btn-primary" ng-click="dumpClausesToDocument()">
+                Download Document
+            </button>
+        </div>
+    </div>
+</div>
