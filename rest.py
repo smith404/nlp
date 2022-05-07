@@ -44,8 +44,14 @@ def send_resources(path):
 
 # The home page route
 @app.route("/")
-def hello_world(name=None):
+def index_page():
     return render_template('index.html', tika_server=TIKA_SERVER + ':' + TIKA_PORT)
+
+
+# The home page route
+@app.route("/gauge")
+def gauge_test_page(name=None):
+    return render_template('gaugetest.html')
 
 
 @app.route('/api/v1.0/data/sanitize', methods=['POST'])

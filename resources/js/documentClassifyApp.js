@@ -89,7 +89,7 @@ app.controller("documentClassifyCtrl", function ($scope, $http) {
             let actualValue = Math.round((result['result'] * 100))
             // Find the best match
             if (actualValue > theBestProbability) theBestProbability = actualValue
-            theData.push((actualValue - 50) * 2)
+            theData.push(actualValue)
             theLabels.push('Clause: ' + (++index))
             theColors.push(toColor(actualValue))
         }
@@ -124,7 +124,7 @@ app.controller("documentClassifyCtrl", function ($scope, $http) {
                 scales: {
                     y: {
                         max: 100,
-                        min: -100,
+                        min: 0,
                         ticks: {
                             stepSize: 10
                         }
