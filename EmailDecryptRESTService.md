@@ -1,30 +1,36 @@
-# Email Decryption REST Service Documentation v1
+# Email Decryption REST Service Documentation v1.0.0
 
-As the application is only servicing a single **GET** endpoint and no body or request header parameters are expected or will be parsed, the service runs using a *http* not *https* protocol
+## Overview
+The service provides a single **blocking** endpoint for proxying a call to the Microsoft AIP command **Unprotect-RMSFile**. The service is single threaded and blocking. This is to avoid starting multiple parallel PowerShell executions as this is not a desired behaviour. A typical decryption execution is performed in a near sub-second response time and the expected volume of encrypted documents should not necessitate a multi threaded approach to decryption.
+
+---
+## Connection to and calling the service
+
+As the application is servicing only a single **GET** endpoint and no body or request header parameters are expected or will be parsed, the service runs using a *http* not *https* protocol
 
 http://{hostname}:{port}/decrypt?file={filepath}
+
 - **hostname**: *required (string)* the hostname of the decryption server
 - **port**: *required (integer)* the port number on the decryption server on which the service is listening 
 - **filepath**: *required (string)* the full UNC path of the file to decrypt which mush be reachable from the decryption server
-
----
-## Overview
-The service provides a single **blocking** endpoint for proxying a call to the Microsoft AIP command **Unprotect-RMSFile**. The service is single threaded and blocking. This is to avoid starting multiple parallel PowerShell executions as this is not a desired behaviour. A typical decryption execution is performed in a sub-second response time and the expected volume of encrypted documents should not necessitate a multi threaded approach to decryption.
 
 ---
 ## Example Execution
 
 An example of a syntactically correct URI would therefore be:
 
-http://localhost:8070/decrypt?file=h:\temp\test.txt
+http://dms-host:8070/decrypt?file=h:\temp\test.txt
 
 The response body in the case of a successful endpoint interaction will be a *json* object with he following attributes:
-- **filepath**: *required (string)* is a mirror (escaped) version of the file path provided in the call
+
+- **filepath**: *required (string)* is a mirror (and out of necessity escaped) version of the file path provided in the call
 - **success**: *required (boolean)* indicates if the file was found and processed by the PowerShell execution
 - **message**: *required (string)* a message indicating the result of the execution
-- **output**: *required (string)* the console output of the PowerShell command. This will under all usual circumstances be an empty string
+- **output**: *optional (string)* the console output of the PowerShell command. This will under all usual circumstances be an empty string or *null*
 
-## Possible *json* response for a successful REST call
+---
+
+## Possible *json* responses for a successful REST call
 
 A successful REST call is characterized by:
 - Status Code        : 200
@@ -32,13 +38,14 @@ A successful REST call is characterized by:
 
 In such cases the following can be expected
 
-http://localhost:8070/decrypt?file=h:\temp\test.txt
+http://dms-host:8070/decrypt?file=h:\temp\test.txt
 
-Returning one of:
+Returning one of the following scenarios:
 
 ### Successful Execution Example
+An existing file is passed to the service via a GET call:
 
-http://localhost:8070/decrypt?file=h:\temp\test.txt
+http://dms-host:8070/decrypt?file=h:\temp\test.txt
 
 ```javascript
 {
@@ -51,7 +58,9 @@ http://localhost:8070/decrypt?file=h:\temp\test.txt
 
 ### Unsuccessful Execution Examples
 
-http://localhost:8070/decrypt?file=h:\temp\test.txt
+A non-existing file is passed to the service via a GET call:
+
+http://dms-host:8070/decrypt?file=h:\temp\test.txt
 
 ```javascript
 {
@@ -62,6 +71,8 @@ http://localhost:8070/decrypt?file=h:\temp\test.txt
 }
 ```
 
+A existing file that the service has no permission to overwrite is passed to the service via a GET call:
+
 ```javascript
 {
   "filepath": "h:\\temp\\test.txt",
@@ -70,6 +81,8 @@ http://localhost:8070/decrypt?file=h:\temp\test.txt
   "output": ""
 }
 ```
+
+An existing file that the service believes to be a system is passed to the service via a GET call:
 
 ```javascript
 {
@@ -80,7 +93,9 @@ http://localhost:8070/decrypt?file=h:\temp\test.txt
 }
 ```
 
-http://localhost:8070/decrypt?file=h:\temp
+A directory is passed to the service as the file parameter
+
+http://dms-host:8070/decrypt?file=h:\temp
 
 ```javascript
 {
@@ -94,7 +109,7 @@ http://localhost:8070/decrypt?file=h:\temp
 ### Full REST Response example
 
 ```powershell
-Invoke-WebRequest -URI "http://localhost:8070/decrypt?file=h:\temp\test.txt"
+Invoke-WebRequest -URI "http://dms-host:8070/decrypt?file=h:\temp\test.txt"
 
 StatusCode        : 200
 StatusDescription : OK
@@ -118,26 +133,23 @@ RawContentLength  : 107
 
 ## Examples of incorrect usage of the REST Service
 
-As mentioned, the service provides only one **GET** endpoint. This expects one parameter called ***file***. Should other endpoints or verbs be used the following errors can be expected
+As mentioned, the service provides only one **GET** endpoint. This expects one parameter called *file*. Should other endpoints or verbs be used the following errors can be expected
 
 - No file parameter specified
 ```powershell
-PS C:\Users\markg> Invoke-WebRequest -URI "http://localhost:8070/decrypt?thefile=h:\temp\test.txt"
+PS C:\Users\markg> Invoke-WebRequest -URI "http://dms-host:8070/decrypt?thefile=h:\temp\test.txt"
 Invoke-WebRequest : The remote server returned an error: (400) Bad Request.
 ```
 
 - Non GET request
 ```powershell
-Invoke-WebRequest -URI "http://localhost:8070/decrypt?file=h:\temp\test.txt" -Method POST
+Invoke-WebRequest -URI "http://dms-host:8070/decrypt?file=h:\temp\test.txt" -Method POST
 Invoke-WebRequest : The remote server returned an error: (405) Method Not Allowed.
 ```
 
 
 - Non incorrect enpoint path
 ```powershell
-PS C:\Users\markg> Invoke-WebRequest -URI "http://localhost:8070/encrypt?file=h:\temp\test.txt"
+PS C:\Users\markg> Invoke-WebRequest -URI "http://dms-host:8070/encrypt?file=h:\temp\test.txt"
 Invoke-WebRequest : The remote server returned an error: (404) Not Found.
 ```
-
-
-
