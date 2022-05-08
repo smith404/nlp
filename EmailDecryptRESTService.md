@@ -113,13 +113,13 @@ Invoke-WebRequest -URI "http://dms-host:8070/decrypt?file=h:\temp\test.txt"
 
 StatusCode        : 200
 StatusDescription : OK
-Content           : {"filepath":"h:\\temp\\test.txt","success":false,"message":"Execution completed successfully","output":""}
+Content           : {"filepath":"h:\\temp\\test.txt","success":true,"message":"Execution completed successfully","output":""}
 RawContent        : HTTP/1.1 200 OK
                     Content-Type: application/json
                     Date: Sun, 8 May 2022 12:58:25 +02:00
                     Server: LDMS Email Decrypter/0.0.1
 
-                    {"filepath":"h:\\temp\\test.txt","success":false,"message":...
+                    {"filepath":"h:\\temp\\test.txt","success":true,"message":...
 Forms             : {}
 Headers           : {[Content-Type, application/json], [Date, Sun, 8 May 2022 12:58:25 +02:00], [Server, K2 Email Decrypter/0.0.1]}
 Images            : {}
@@ -148,7 +148,7 @@ Invoke-WebRequest : The remote server returned an error: (405) Method Not Allowe
 ```
 
 
-- Non incorrect enpoint path
+- Non incorrect endpoint path
 ```powershell
 PS C:\Users\markg> Invoke-WebRequest -URI "http://dms-host:8070/encrypt?file=h:\temp\test.txt"
 Invoke-WebRequest : The remote server returned an error: (404) Not Found.
