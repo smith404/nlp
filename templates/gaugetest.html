@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>CSS Gauge</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+
+        <link rel="shortcut icon" type="image/ico" href="/resources/favicon.ico">
+
+        <link rel="stylesheet" href="/resources/css/gauge.css" />
+        </head>
+    <body>
+        <div id="test-gauge" class="gauge">
+            <div class="gauge-body">
+                <div id="me" class="gauge-fill">
+                </div>
+                <div class="gauge-cover">
+                </div>
+            </div>
+        </div>
+
+        <div id="test-gauge2" class="gauge">
+            <div class="gauge-body">
+                <div id="me" class="gauge-fill">
+                </div>
+                <div class="gauge-cover">
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const gaugeElement = document.getElementById("test-gauge");
+
+            function setGaugeValue(gauge, value)
+            {
+                if (gauge == null || value < 0 || value > 1) {
+                    return;
+                }
+
+                gauge.querySelector(".gauge-fill").style.transform = `rotate(${value / 2}turn)`;
+                gauge.querySelector(".gauge-cover").textContent = `${Math.round(value * 100)}%`;
+            }
+
+            setGaugeValue(gaugeElement, 0.3);
+        </script>
+    </body>
+</html>
