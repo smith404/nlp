@@ -77,7 +77,9 @@ class IManageSession:
                 domain_str = ObjectType.domain(domain)
             url = domain_str + '/' + id
             body = self.get_imanage_data(url)
-            return self.create_object(body)
+            item = self.create_object(body['data'])
+            item.session = self
+            return item
             
     def get_imanage_data(self, url_path):
         url = self.baseURL + url_path
@@ -174,6 +176,7 @@ class IManageSession:
         for itemObject in itemData:
             item = self.create_object(itemObject)
             item.session = self
+            items.append(item)
         return items
 
     def get_recent_objects(self, domain, offset = 0):
